@@ -15,6 +15,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.*;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
