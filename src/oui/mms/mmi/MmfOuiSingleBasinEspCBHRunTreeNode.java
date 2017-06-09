@@ -17,6 +17,7 @@ import oui.mms.io.MmsOuiEspReader;
 import oui.mms.datatypes.OuiCalendar;
 import oui.gui.OuiGui;
 import oui.mms.datatypes.TimeSeries;
+import oui.mms.io.CbhDateException;
 
 /**
  *
@@ -28,32 +29,36 @@ public class MmfOuiSingleBasinEspCBHRunTreeNode extends MmsModelTreeNode impleme
     private int initLength;
     private String data_file;
     private String espDataDestDir;
-    private String[] subBasins;
+//    private String[] subBasins;
     private String mmsWorkspace;
     private String executable;
-    private String envFile;
+//    private String envFile;
     private String controlFileName;
     private String espIODir;
     private String espVariableName;
     private String espVariableIndex;
-    private String xrouteHeaderDataFile;
-    private String xrouteExecutable;
-    private String xrouteControlFile;
-    private String xrouteEspVariableName;
-    private String[] xrouteEspVariableIndex;
-    private String relativeMmsWorkspace;
+//    private String xrouteHeaderDataFile;
+//    private String xrouteExecutable;
+//    private String xrouteControlFile;
+//    private String xrouteEspVariableName;
+//    private String[] xrouteEspVariableIndex;
+//    private String relativeMmsWorkspace;
     private String paramFileName;
     private String precipFileName;
     private String tmaxFileName;
     private String tminFileName;
     private String mmi = null;
+    private OuiCalendar data_start;
+    private OuiCalendar data_end;
+    private int data_num_dates;
     
-    /** Creates a new instance of SingleRunMmi */
+    /** Creates a new instance of SingleRunMmi
+     * @param xml_node */
     public MmfOuiSingleBasinEspCBHRunTreeNode(Node xml_node) {
         super(xml_node);
         mmi = MmsProjectXml.getElementContent(xml_node, "@mmi", "none");
     }
-    
+
     @Override
     public void run() {
         MmsProjectXml pxml = MmsProjectXml.getMmsProjectXml(); 
@@ -93,12 +98,16 @@ public class MmfOuiSingleBasinEspCBHRunTreeNode extends MmsModelTreeNode impleme
  */
         
         MmsDataFileReader mdfr = new MmsDataFileReader(data_file);
+        data_start = mdfr.getStart();
+        data_end = mdfr.getEnd();
+        data_num_dates = mdfr.getDates().length;
         if (showRunnerGui) {
             MmsEspRunSimpleGui gui = new MmsEspRunSimpleGui(data_file, mdfr.getStart(), mdfr.getEnd(), this);
             WindowFactory.displayInFrame(gui, "Run MMS Model in ESP Mode");
         }
     }
     
+    @Override
     public void runModel(OuiCalendar forecastStart, OuiCalendar forecastEnd) {
 /*
  *  Generate the ESP run and save to XML file
@@ -107,20 +116,47 @@ public class MmfOuiSingleBasinEspCBHRunTreeNode extends MmsModelTreeNode impleme
         MmsOuiEspRun.writeEspDataFiles(ed, initLength, data_file, espDataDestDir, forecastStart, forecastEnd);
 
         if (precipFileName != null) {
-            ArrayList<TimeSeries> cbhPrecip = new ArrayList<TimeSeries>();
-            MmsOuiEspRun.writeEspCBHFiles(ed, cbhPrecip, initLength, precipFileName, espDataDestDir, forecastStart, forecastEnd);
+            ArrayList<TimeSeries> cbhPrecip = new ArrayList<>();
+            try {
+                MmsOuiEspRun.writeEspCBHFiles(ed, cbhPrecip, initLength,
+                        precipFileName, espDataDestDir, forecastStart, forecastEnd,
+                        data_start, data_end, data_num_dates);
+            } catch (CbhDateException e) {
+                JOptionPane.showMessageDialog(GuiUtilities.windowFor(OuiGui.getTreeScrollPane()),
+                        "ESP Run Unsuccessful\nDates in " + precipFileName + "\nDon't match dates in " + data_file,
+                        "Run Status", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             ed.setCbhPrecip(cbhPrecip);
         }
 
         if (tmaxFileName != null) {
-            ArrayList<TimeSeries> cbhTmax = new ArrayList<TimeSeries>();
-            MmsOuiEspRun.writeEspCBHFiles(ed, cbhTmax, initLength, tmaxFileName, espDataDestDir, forecastStart, forecastEnd);
+            ArrayList<TimeSeries> cbhTmax = new ArrayList<>();
+            try {
+                MmsOuiEspRun.writeEspCBHFiles(ed, cbhTmax, initLength, tmaxFileName,
+                        espDataDestDir, forecastStart, forecastEnd,
+                        data_start, data_end, data_num_dates);
+            } catch (CbhDateException e) {
+                JOptionPane.showMessageDialog(GuiUtilities.windowFor(OuiGui.getTreeScrollPane()),
+                        "ESP Run Unsuccessful\nDates in " + tmaxFileName + "\nDon't match dates in " + data_file,
+                        "Run Status", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             ed.setCbhTmax(cbhTmax);
         }
 
         if (tminFileName != null) {
-            ArrayList<TimeSeries> cbhTmin = new ArrayList<TimeSeries>();
-            MmsOuiEspRun.writeEspCBHFiles(ed, cbhTmin, initLength, tminFileName, espDataDestDir, forecastStart, forecastEnd);
+            ArrayList<TimeSeries> cbhTmin = new ArrayList<>();
+            try {
+                MmsOuiEspRun.writeEspCBHFiles(ed, cbhTmin, initLength, tminFileName,
+                        espDataDestDir, forecastStart, forecastEnd,
+                        data_start, data_end, data_num_dates);
+            } catch (CbhDateException e) {
+                JOptionPane.showMessageDialog(GuiUtilities.windowFor(OuiGui.getTreeScrollPane()),
+                        "ESP Run Unsuccessful\nDates in " + tminFileName + "\nDon't match dates in " + data_file,
+                        "Run Status", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             ed.setCbhTmin(cbhTmin);
         }
 
