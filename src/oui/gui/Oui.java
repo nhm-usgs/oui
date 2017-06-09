@@ -39,7 +39,17 @@ public class Oui extends GuiProgram {
 
         preferences = Preferences.userNodeForPackage(Oui.class);
 
-        logger.log(Level.INFO, "Oui-JMD started with {0}", xml_file_name);
+        String[] vals = {xml_file_name, VersionInfo.getValForTok("SHA"),
+            VersionInfo.getValForTok("ORIGIN"), VersionInfo.getValForTok("TAG"),
+            VersionInfo.getValForTok("COMMITDATE"), VersionInfo.getValForTok("COMPILER"),
+            VersionInfo.getValForTok("OS_Version"), VersionInfo.getValForTok("BUILDER"),
+            VersionInfo.getValForTok("BUILDDATE")
+        };
+
+        logger.log(Level.INFO, "Oui started with {0}\n  SHA = {1}\n  ORIGIN = {2}\n  "
+                + "TAG = {3}\n  COMMITDATE = {4}\n  COMPILER = {5}\n  OS_Version = {6}\n  "
+                + "BUILDER = {7}\n  BUILDDATE = {8}", vals);
+
         OuiProjectXml.OuiProjectXmlFactory(xml_file_name);
 
         OuiGui gui = new OuiGui();

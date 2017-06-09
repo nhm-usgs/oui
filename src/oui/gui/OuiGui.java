@@ -363,12 +363,32 @@ public class OuiGui extends JPanel implements PropertyChangeListener, MenuBarPro
 private void about_menu_itemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_about_menu_itemActionPerformed
 {//GEN-HEADEREND:event_about_menu_itemActionPerformed
 
-    String foo = "Object User Interface (OUI)" + "\n"
-        + "U.S. Geological Survey" + "\n\n"
-        + "OUI Version: 4.0.1dev3 " + "\n"
-        + "Date: 2016-03-09" + "\n"
-        + "Built with Java version: 1.7.0_79" + "\n"
-        + "url: http://wwwbrr.cr.usgs.gov/oui" + "\n";
+//    String foo = "Object User Interface (OUI)" + "\n"
+//        + "U.S. Geological Survey" + "\n\n"
+//        + "OUI Version: 4.0.1dev3 " + "\n"
+//        + "Date: 2016-03-09" + "\n"
+//        + "Built with Java version: 1.7.0_79" + "\n"
+//        + "url: http://wwwbrr.cr.usgs.gov/oui" + "\n";
+    
+            String[] vals = {VersionInfo.getValForTok("SHA"),
+            VersionInfo.getValForTok("ORIGIN"), VersionInfo.getValForTok("TAG"),
+            VersionInfo.getValForTok("COMMITDATE"), VersionInfo.getValForTok("COMPILER"),
+            VersionInfo.getValForTok("OS_Version"), VersionInfo.getValForTok("BUILDER"),
+            VersionInfo.getValForTok("BUILDDATE")
+        };
+
+    String foo = "Object User Interface (OUI)\n"
+            + "U.S. Geological Survey\n\n"
+            + "url: https://wwwbrr.cr.usgs.gov/oui\n"
+            + "Jar SHA: " + vals[0] + "\n"
+            + "Jar Origin: " + vals[1] + "\n"
+            + "Jar Tag: " + vals[2] + "\n"
+            + "Jar Commit Date: " + vals[3] + "\n"
+            + "Compiler: " + vals[4] + "\n"
+            + "Build OS Version: " + vals[5] + "\n"
+            + "Builder: " + vals[6] + "\n"
+            + "Build Date: " + vals[7] + "\n";
+
 
     JOptionPane.showMessageDialog(GuiUtilities.windowFor(this), foo, "About", JOptionPane.INFORMATION_MESSAGE);
 }//GEN-LAST:event_about_menu_itemActionPerformed
