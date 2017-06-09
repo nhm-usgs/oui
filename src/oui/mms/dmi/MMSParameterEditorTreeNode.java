@@ -1,0 +1,117 @@
+/*
+ * MMSParameterTreeNode.java
+ *
+ * Created on November 13, 2002, 2:11 PM
+ */
+
+package oui.mms.dmi;
+
+import gov.usgs.cawsc.gui.WindowFactory;
+import oui.mms.io.MmsDefaultParamsReader;
+import oui.mms.io.MmsParamsReader;
+import org.w3c.dom.Node;
+import oui.treetypes.OuiModelTreeNode;
+import oui.mms.MmsProjectXml;
+import oui.mms.datatypes.ParameterSet;
+import oui.mms.gui.Mms;
+import oui.paramtool.ParamTool;
+import oui.paramtool.ParamToolGui;
+
+/** This class contains the necessary information to register a shape/dbf
+ * file and an MMS parameter file with the Object User Interface (OUI).
+ * The information describing the shape file and how to display it is read from the
+ * XML control file tree.xml in the OUI project directory. Refer to <I>The Object
+ * User Interface (OUI): User's Manual</I> for more information.
+ * <P>
+ * The element in tree.xml must look like this:<BR>
+ * <CODE>&lt;node name="Regions" class="oui.gui.OuiShapeTreeNode" theme="regions" nameAttribute="NAME" fillColor="green" borderColor="black"/&gt;</CODE>
+ * <P>
+ * The element tag must be <B>node</B>.
+ * <P>
+ * The element has the following attributes. Some are required and are specified as
+ * such. If an optional attribute is not specified in the element, a default value
+ * is supplied by this class.
+ * <P>
+ * Attributes:<BR>
+ *<UL>
+ * <LI><B>name</B> (required) is the name as it appeares in the OUI project tree.<BR>
+ * <LI><B>class</B> (required) specifies this class.  It must be set to
+ * "oui.gui.OuiShapeTreeNode".<BR>
+ * <LI><B>theme</B> (required) is the name of the shape/dbf file in the shapes/
+ * directory in the project directory.<BR>
+ * <LI><B>nameAttribute</B> (optional) is the name of the column in the dbf file to
+ * use for labels on the OUI map.<BR>
+ * <LI><B>fillColor</B> (optional) is the color to use to fill in the shapes on the
+ * OUI map. The default fillColor is clear (no fill).<BR>
+ * <LI><B>borderColor</B> (optional) is the color to use to outline the shapes on
+ * the OUI map. The default borderColor is black.<BR>
+ * <LI><B>color</B> (optional) is the color to use for filling and outlining shapes,
+ * or to draw lines and points. The default color is black.<BR>
+ * <LI><B>type</B> (optional) specifies the node type.  The default type is blank.<BR>
+ * <LI><B>desc</B> (optional) is a description of the node. The default description is blank.<BR>
+ *</UL>
+ * <P>
+ * The following colors are valid: black, blue, cyan, darkGray, gray, green,
+ * lightGray, magenta, orange, pink, red, white, yellow, and clear.
+ *
+ *
+ * @author markstro
+ * @version 2.0
+ */
+public class MMSParameterEditorTreeNode extends OuiModelTreeNode {
+    private MmsParamsReader mms_param_reader = null;
+    private String param_file_name = null;
+    private String default_param_file_name = null;
+    
+    /** Create an MMSParameterTree Node object.
+     * @param xml_node The xml node element which describes this shape/dbf file combo.
+     * @param parent The OUI tree node parent of this OUI tree node.
+     */
+    public MMSParameterEditorTreeNode(Node xml_node) {
+        super(xml_node);
+        _type = "MMS Parameter Editor";   // overrides OuiTreeNode
+//
+        MmsProjectXml pxml = MmsProjectXml.getMmsProjectXml();
+        String name = pxml.getElementContent(xml_node, "@parameterfile", null);
+        param_file_name = pxml.getFileFullPath("parameterfile", name);
+        
+        String default_name = pxml.getElementContent(xml_node, "@defaultparamfile", null);
+        if (default_name != null) {
+            default_param_file_name = pxml.getFileFullPath("defaultparamfile", default_name);
+        }
+    }
+
+    public void cleanup() {
+    }
+    
+    public void declare() {
+    }
+    
+    public void initialize() {
+    }
+    
+    public void run() {
+        try {
+            MmsParamsReader mp = new MmsParamsReader(param_file_name);
+            ParameterSet ps = (ParameterSet)(mp.read());
+            ParamTool mpe;
+            
+//            if (default_param_file_name == null) {
+//                mpe = new ParamTool(ps);
+//            } else {
+                try {
+                    MmsDefaultParamsReader mdpr = new MmsDefaultParamsReader(default_param_file_name);
+                    ParameterSet default_ps = (ParameterSet) mdpr.read();
+                    
+                    mpe = new ParamTool(ps, default_ps);                    
+                } catch (java.io.IOException e) {
+                    System.out.println(default_param_file_name + " io exception");
+                }
+//            }
+            
+        } catch (java.io.IOException e) {
+            System.out.println(param_file_name + " io exception");
+        }
+    }
+    
+}
