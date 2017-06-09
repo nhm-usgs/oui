@@ -329,7 +329,8 @@ public class MmsOuiEspRun  {
 
     static void writeEspCBHFiles(EnsembleData ed, ArrayList<TimeSeries> cbhArray,
             int initLength, String cbh_file, String espDataDestDir,
-            OuiCalendar forecastStart, OuiCalendar forecastEnd) {
+            OuiCalendar forecastStart, OuiCalendar forecastEnd, OuiCalendar check_start,
+            OuiCalendar check_end, int check_num_dates) throws CbhDateException {
         ArrayList<TimeSeries> forecasts = new ArrayList ();
         ArrayList<TimeSeries> historic = new ArrayList ();
         ArrayList<TimeSeries> input = new ArrayList ();
@@ -337,6 +338,12 @@ public class MmsOuiEspRun  {
         CbhReader cbhReader = new CbhReader(cbh_file);
         OuiCalendar data_file_start = cbhReader.getStart();
         OuiCalendar data_file_end = cbhReader.getEnd();
+        
+        // Check that the CBH file has the same dates as the PRMS Data File.
+        if (!OuiCalendar.isSameDay(data_file_start, check_start)) {
+            throw (new CbhDateException(data_file_start.getMmsDateTime(),
+                    data_file_end.getMmsDateTime(), cbhReader.getDates().length));
+        }
 /*
  *  Get all the data
  */
@@ -389,7 +396,9 @@ public class MmsOuiEspRun  {
         int forecast_length = (int)(forecastEnd.getJulian()) - (int)(forecastStart.getJulian()) + 1;
 
         OuiCalendar historic_start = new OuiCalendar();
-        historic_start.set(data_file_start.getYear(), forecastStart.getMonth(), forecastStart.getDay());
+//        historic_start.set(data_file_start.getYear(), forecastStart.getMonth(), forecastStart.getDay());
+        historic_start.set(data_file_start.getYear(), forecastStart.getMonth() - 1, forecastStart.getDay());
+
 
         OuiCalendar historic_end = new OuiCalendar();
         historic_end.setJulian(historic_start.getJulian() + forecast_length);
