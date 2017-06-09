@@ -26,9 +26,14 @@ public class VersionInfo {
 
         try {
             input = Oui.class.getClassLoader().getResourceAsStream(props);
-            prop.load(input);
-            msg = prop.getProperty(propToken);
-            
+            if (input == null) {
+                Logger.getLogger(Oui.class.getName()).log(Level.SEVERE,
+                        "Version property file " + props + " not found. No version information.");
+            } else {
+                prop.load(input);
+                msg = prop.getProperty(propToken);
+            }
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(VersionInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
