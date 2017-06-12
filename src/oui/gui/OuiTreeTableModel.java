@@ -32,6 +32,7 @@ public class OuiTreeTableModel extends AbstractTreeTableModel implements TreeTab
      * @param node A tree node.
      * @return The number of children of <code>node</code>.
      */
+    @Override
     public int getChildCount(Object node) {        
         OuiTreeNode tnd = (OuiTreeNode)node;
         return tnd.getChildCount();
@@ -42,6 +43,7 @@ public class OuiTreeTableModel extends AbstractTreeTableModel implements TreeTab
      * @param i Selected index.
      * @return The child of <code>node</code> at index <code>i</code>.
      */
+    @Override
     public Object getChild(Object node, int i) {
         OuiTreeNode tnd = (OuiTreeNode)node;
         return (tnd.getChildren()).elementAt(i);
@@ -54,6 +56,7 @@ public class OuiTreeTableModel extends AbstractTreeTableModel implements TreeTab
     /** Returns the number of columns.
      * @return The number of columns.
      */
+    @Override
     public int getColumnCount() {
         return col_names.length;
     }
@@ -62,6 +65,7 @@ public class OuiTreeTableModel extends AbstractTreeTableModel implements TreeTab
      * @param column Selected column index.
      * @return The name for a particular column.
      */
+    @Override
     public String getColumnName(int column) {
         return col_names[column];
     }
@@ -79,6 +83,7 @@ public class OuiTreeTableModel extends AbstractTreeTableModel implements TreeTab
      * @param column Selected column index.
      * @return The value of the particular column.
      */
+    @Override
     public Object getValueAt(Object node, int column) {
         OuiTreeNode tnd = (OuiTreeNode)node;
         

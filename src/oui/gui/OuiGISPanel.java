@@ -47,7 +47,9 @@ public class OuiGISPanel extends GISPanel implements GISPanelObserver, GISPanel.
 
 
     /** Create the OuiGISPanel object.
-     * @param oui The OUI object for this panel.
+     * @param mapPanel
+     * @param featureLabel
+     * @param loadedPanel
      */
     public OuiGISPanel (JPanel mapPanel, JLabel featureLabel, LoadedPanel loadedPanel) {
         this.featureLabel = featureLabel;
@@ -77,6 +79,7 @@ public class OuiGISPanel extends GISPanel implements GISPanelObserver, GISPanel.
     public void zoomInMode() {setFunctionMode(ZOOM_FUNCTION);setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));}
     public void zoomRectMode() {setFunctionMode(ZOOM_RECT_FUNCTION);setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));}
     public void zoomOutMode() {zoomOut();}
+    @Override
     public void panMode() {
         setFunctionMode(PAN_FUNCTION);
         setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -106,11 +109,12 @@ public void decreaseLabelSize() {
     this.firePropertyChange("labelFontSize", -1, newSize);
 }
 
-  public void scaleChanged() {
-    double scale = useFixedFontSize ? 0d : context.getScale();
-    getThemeView().setLabelSize(getThemeView().getLabelSize(), scale);
-      super.scaleChanged();
-  }
+    @Override
+    public void scaleChanged() {
+        double scale = useFixedFontSize ? 0d : context.getScale();
+        getThemeView().setLabelSize(getThemeView().getLabelSize(), scale);
+        super.scaleChanged();
+    }
 
    /*
     * Stack the themes on the OUI map in the same order that they are in on the loaded list.
@@ -142,17 +146,25 @@ public void decreaseLabelSize() {
   *
   */
 
+    @Override
     public void pointed(Point2D p, boolean isSelected) {
         System.out.println(p);
         System.out.println("pointed function");
     }
+    @Override
     public void customize(Theme theme, Feature feature, int index) {}
+    @Override
     public synchronized void tracked(Point2D location, boolean inside) {}
+    @Override
     public void tracked(Theme theme, Feature feature, Point2D location, boolean inside) {}
+    @Override
     public void selected(Theme theme, boolean isSelected) {}
+    @Override
     public void functionInvoked() {}
+    @Override
     public void functionFinished() {}
 
+    @Override
     public void selected(Theme theme, Feature feature, boolean isSelected) {
         // Get the OuiTreeNode for this theme
         OuiTreeNode otn = TreeNodes.getNodeForTheme(theme);
@@ -162,14 +174,14 @@ public void decreaseLabelSize() {
         }
 
         // If the parameter table is open, highlight the row.
-        if (otn.has_table() && (((OuiShapeTreeNode)otn).isTableShown().booleanValue())) {
+        if (otn.has_table() && (((OuiShapeTreeNode)otn).isTableShown())) {
             ((OuiShapeTreeNode)otn).getTableFrame().setSelectedFeatureInTable(feature);
         }
 
         if (feature != null) {
 
             // Check for query data
-            if (otn.has_data() && (((OuiDataTreeNode)otn).isInQueryMode()).booleanValue()) {
+            if (otn.has_data() && (((OuiDataTreeNode)otn).isInQueryMode())) {
                 ((OuiDataTreeNode)otn).queryData(feature);
             }
         }
@@ -198,6 +210,7 @@ public void decreaseLabelSize() {
     VectorTheme directlySetVectorTheme = null;
     int directlySetLabelIndex = 0;
 
+    @Override
     public void update(Point2D realCoord, Point screenCoord, int decimalScale) {
         Feature f;
         mouseSelectedPoint = new Point(screenCoord);
@@ -242,6 +255,7 @@ public void decreaseLabelSize() {
         directlySetLabelIndex = newLabelIndex;
     }
 
+    @Override
     protected void processModeEvent(InputEvent e) {
 
     if (e instanceof KeyEvent) {

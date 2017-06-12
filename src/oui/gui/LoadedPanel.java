@@ -28,13 +28,13 @@ import oui.treetypes.OuiThemeTreeNode;
 
 public class LoadedPanel {
     private OuiLoadedTableModel model = null;
-    private JPopupMenu popup;
+    private final JPopupMenu popup;
     private OuiShapeTreeNode activated_node = null;
     private OuiDataTreeNode query_node = null;
     private final JTable loadedTable;
     
     /** Create a LoadedPanel object.
-     * @param oui The OUI object for this panel.
+     * @param loadedTable
      */
     public LoadedPanel(JTable loadedTable) {
         this.loadedTable = loadedTable;
@@ -86,6 +86,7 @@ public class LoadedPanel {
         JMenuItem menu_item = new JMenuItem("Remove");
         p.add(menu_item);
         menu_item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] selectedRows = loadedTable.getSelectedRows();
                 for (int i = (selectedRows.length - 1); i >= 0; i--){
@@ -97,6 +98,7 @@ public class LoadedPanel {
         menu_item = new JMenuItem("Move Up");
         p.add(menu_item);
         menu_item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] selectedRows = loadedTable.getSelectedRows();
                 Arrays.sort(selectedRows);
@@ -110,6 +112,7 @@ public class LoadedPanel {
         menu_item = new JMenuItem("Move Down");
         p.add(menu_item);
         menu_item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] selectedRows = loadedTable.getSelectedRows();
                 Arrays.sort(selectedRows);
@@ -122,6 +125,7 @@ public class LoadedPanel {
         menu_item = new JMenuItem("Move to Top");
         p.add(menu_item);
         menu_item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] selectedRows = loadedTable.getSelectedRows();
                 Arrays.sort(selectedRows);
@@ -136,6 +140,7 @@ public class LoadedPanel {
         menu_item = new JMenuItem("Move to Bottom");
         p.add(menu_item);
         menu_item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] selectedRows = loadedTable.getSelectedRows();
                 Arrays.sort(selectedRows);

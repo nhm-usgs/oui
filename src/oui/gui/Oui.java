@@ -6,16 +6,8 @@
 package oui.gui;
 
 import gov.usgs.cawsc.apps.GuiProgram;
-import gov.usgs.cawsc.gui.GuiUtilities;
 import gov.usgs.cawsc.gui.WindowFactory;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.*;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
@@ -53,27 +45,9 @@ public class Oui extends GuiProgram {
         OuiProjectXml.OuiProjectXmlFactory(xml_file_name);
 
         OuiGui gui = new OuiGui();
-
-        // Read the preferred window size from the prefs.
-//        Rectangle rect = new Rectangle(0, 0, 1000, 700);
-//        rect.x = preferences.getInt("x", rect.x);
-//        rect.y = preferences.getInt("y", rect.y);
-//        rect.width = preferences.getInt("width", rect.width);
-//        rect.height = preferences.getInt("height", rect.height);
-//
-//        GuiUtilities.keepWindowInBounds(rect);
-
         JFrame frame = WindowFactory.instance().getMainFrame();
         WindowFactory.instance().packWindowWith(null, gui, frame);
         WindowFactory.instance().displayInWindow(gui);
-//        frame.add(gui);
-//        frame.setJMenuBar(gui.getMenuBar());
-//        frame.pack();
-//        frame.setBounds(rect);
-//        frame.setVisible(true);
-
-        //gui.setSize(gui.getPreferredSize());
-        //gui.setVisible(true);
     }
 
     /**

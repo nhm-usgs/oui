@@ -11,6 +11,7 @@ import gov.usgs.cawsc.gui.PersistentSplitterTracker;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -55,7 +56,7 @@ public class OuiGui extends JPanel implements PropertyChangeListener, MenuBarPro
             fontSizeSpinner.setValue(fontSize);
         }
         if ("panMode".equals(evt.getPropertyName())) {
-            if (Boolean.TRUE == evt.getNewValue()) {
+            if (Objects.equals(Boolean.TRUE, evt.getNewValue())) {
                 map_pan_button.setSelected(true);
             }
         }
@@ -76,6 +77,7 @@ public class OuiGui extends JPanel implements PropertyChangeListener, MenuBarPro
         return loadedPanel;
     }
 
+    @Override
     public JMenuBar getMenuBar() {
         return jMenuBar;
     }

@@ -8,7 +8,6 @@ package oui.gui;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
@@ -32,7 +31,8 @@ public class TreePanel {
     private final LoadedPanel loadedPanel;
 
     /** Create a TreePanel object.
-     * @param oui The OUI object for this panel.
+     * @param treeScrollPane
+     * @param loadedPanel
      */
     public TreePanel(JScrollPane treeScrollPane, LoadedPanel loadedPanel) {
         this.loadedPanel = loadedPanel;
@@ -52,23 +52,17 @@ public class TreePanel {
 
         display_menu_item = new JMenuItem("Load");
         p.add(display_menu_item);
-        display_menu_item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                OuiThemeTreeNode ottn = (OuiThemeTreeNode) getSelectionFromTree();
-                ottn.setDisplayed(true);
-                loadedPanel.addTheme(ottn);
-            }
+        display_menu_item.addActionListener((ActionEvent e) -> {
+            OuiThemeTreeNode ottn = (OuiThemeTreeNode) getSelectionFromTree();
+            ottn.setDisplayed(true);
+            loadedPanel.addTheme(ottn);
         });
 
         run_menu_item = new JMenuItem("Run");
         p.add(run_menu_item);
-        run_menu_item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                OuiModelTreeNode omtn = (OuiModelTreeNode) getSelectionFromTree();
-                omtn.run();
-            }
+        run_menu_item.addActionListener((ActionEvent e) -> {
+            OuiModelTreeNode omtn = (OuiModelTreeNode) getSelectionFromTree();
+            omtn.run();
         });
 
         return p;

@@ -18,13 +18,15 @@ import oui.treetypes.OuiThemeTreeNode;
  * @version 2.0
  */
 public class OuiLoadedTableModel extends AbstractTableModel {
-    ArrayList<OuiThemeTreeNode> theme_vec = new ArrayList<OuiThemeTreeNode>(10);
+    ArrayList<OuiThemeTreeNode> theme_vec = new ArrayList<>(10);
     
     static protected String[] col_names = {"Name", "Visible", "Labels", "Active", "Query", "Attributes"};
     private final LoadedPanel loadedPanel;
     private final OuiGISPanel gisPanel;
     
     /** Create an OuiLoadedTableModel object.
+     * @param loadedPanel
+     * @param gisPanel
      */
     public OuiLoadedTableModel(LoadedPanel loadedPanel, OuiGISPanel gisPanel) {
         this.loadedPanel = loadedPanel;
@@ -102,7 +104,9 @@ public class OuiLoadedTableModel extends AbstractTableModel {
     //  Implement the AbstractTable Model.
     @Override
     public String getColumnName(int col) {return col_names[col];}
+    @Override
     public int getColumnCount() {return col_names.length;}
+    @Override
     public int getRowCount() {return theme_vec.size();}
     @Override
     public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
@@ -147,7 +151,7 @@ public class OuiLoadedTableModel extends AbstractTableModel {
                 break;
                 
             case 4:  // query
-                if (((Boolean)value).booleanValue()) {
+                if (((Boolean)value)) {
                     ((OuiShapeTreeNode)(theme_vec.get(row))).activate((Boolean)value);
                 }
                 
@@ -166,6 +170,7 @@ public class OuiLoadedTableModel extends AbstractTableModel {
         this.fireTableDataChanged();
     }
     
+    @Override
     public Object getValueAt(int row, int col) {
         OuiThemeTreeNode ottn = (OuiThemeTreeNode)(theme_vec.get(row));
         
