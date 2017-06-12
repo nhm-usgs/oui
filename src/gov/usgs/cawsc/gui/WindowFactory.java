@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 /**
@@ -67,6 +66,9 @@ public class WindowFactory {
      * Display a panel inside a modal dialog box.
      *
      * @param associate The component that caused the dialog to be opened.
+     * @param content
+     * @param title
+     * @return 
      */
     public Window createModalDialogFor(Component associate, Component content, String title) {
         return createDialogFor(associate, content, title, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -76,6 +78,9 @@ public class WindowFactory {
      * Display a panel inside a modeless dialog box.
      *
      * @param associate The component that caused the dialog to be opened.
+     * @param content
+     * @param title
+     * @return 
      */
     public Window createModelessDialogFor(Component associate, Component content, String title) {
         return createDialogFor(associate, content, title, Dialog.ModalityType.MODELESS);
@@ -85,10 +90,14 @@ public class WindowFactory {
      * Display a panel inside a dialog box.
      *
      * @param associate The component that caused the dialog to be opened.
+     * @param content
+     * @param title
+     * @param modalityType
+     * @return 
      */
     public Window createDialogFor(Component associate, Component content, String title, Dialog.ModalityType modalityType) {
         // Create the dialog if this is the fist time it has been used
-        JDialog dialog = null;
+        JDialog dialog;
 
         Window ancestor = GuiUtilities.findAncestorFor(associate);
         dialog = new JDialog(ancestor, title, modalityType);
@@ -103,8 +112,7 @@ public class WindowFactory {
      * Display a panel inside a JFrame.
      *
      * @param content The component to be placed within the frame
-     * @param title The title of the frame
-     */
+     * @return /
     public Window createFrameFor(Component content, String title) {
         // Create the frame if this is the fist time it has been used
         JFrame frame = null;
@@ -138,7 +146,6 @@ public class WindowFactory {
      *
      * @param associate The component associated with the window to be opened, if a dialog,
      * or null if none
-     * @param content The component to place within the window
      * @param window The window
      *
      */
@@ -193,7 +200,7 @@ public class WindowFactory {
                 WindowFactory.this.preferences.putInt(simpleClassName + ".windowWidth", windowRect.width);
                 WindowFactory.this.preferences.putInt(simpleClassName + ".windowHeight", windowRect.height);
             }
-        };
+        }
         class ActivationAdapter extends WindowAdapter {
 
             @Override
@@ -222,7 +229,7 @@ public class WindowFactory {
                 WindowFactory.instance().stopTracking(window);
 //                }
             }
-        };
+        }
 
         SizeAndShapeAdapter ssAdapter = new SizeAndShapeAdapter();
         ssAdapter.adapterContent = content;
@@ -236,7 +243,7 @@ public class WindowFactory {
     /**
      * Display this panel inside a window.
      *
-     * @param component The component that caused the window to be opened.
+     * @param content
      */
     public void displayInWindow(Component content) {
         // Create the window if this is the fist time it has been used
@@ -360,11 +367,10 @@ public class WindowFactory {
 
             List<Window> nonShowingList = new LinkedList<>();
 
-            for (Window window : windowList) {
+            windowList.stream().forEach((Window window) -> {
                 if (window != null && (window.isShowing() || includeIconified)) {
                     if (untrackedList.contains(window)
-                        || (!includeIconified && window instanceof Frame && ((Frame) window).getExtendedState() == Frame.ICONIFIED)) {
-                        continue;
+                            || (!includeIconified && window instanceof Frame && ((Frame) window).getExtendedState() == Frame.ICONIFIED)) {
                     } else {
                         if (window instanceof Frame && ((Frame) window).getExtendedState() == Frame.ICONIFIED) {
                             ((Frame) window).setState(Frame.NORMAL);
@@ -375,7 +381,7 @@ public class WindowFactory {
                 } else {
                     nonShowingList.add(window);
                 }
-            }
+            });
             windowList.removeAll(nonShowingList);
         } else {
             if (requestedToFrontList.contains(topWindow)) {
@@ -387,12 +393,12 @@ public class WindowFactory {
 
     public void iconifyAllExcept(Window exceptedWindow) {
         if (!requestedIconifiedList.contains(exceptedWindow)) {
-            for (Window window : windowList) {
-                if (window != exceptedWindow && window instanceof Frame) {
-                    ((Frame) window).setState(Frame.ICONIFIED);
-                    requestedIconifiedList.add(window);
-                }
-            }
+            windowList.stream().filter((window) -> (window != exceptedWindow && window instanceof Frame)).map((window) -> {
+                ((Frame) window).setState(Frame.ICONIFIED);
+                return window;
+            }).forEach((window) -> {
+                requestedIconifiedList.add(window);
+            });
         }
     }
 

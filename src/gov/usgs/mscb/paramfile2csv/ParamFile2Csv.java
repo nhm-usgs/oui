@@ -55,7 +55,9 @@ public class ParamFile2Csv {
             
             } finally {
                 try {
-                    inStream.close();
+                    if (inStream != null) {
+                        inStream.close();
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(ParamFile2Csv.class.getName()).log(Level.SEVERE, null, ex);
                 }

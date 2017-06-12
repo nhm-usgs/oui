@@ -209,40 +209,42 @@ public class PrmsFast {
                 for (int j = 1; j < colCount; j++) {
                     String parName = trialTable.getColumnName(j);
                     
-                    String foo = trialTable.getValueAt(i, j).toString();
+                    String foo;
 
                     
                     // These are parameters that depend on each other
                     // hru_percent_imperv + dprst_frac_hru < 0.999
-                    if (parName.equals("hru_percent_imperv")) {
-                        // Read the dprst_frac_hru parameter from the parameter file.
-                        double max = ps.getParameter("dprst_frac_hru").getMax();
-                        
-                        // The range of hru_percent_imperv is calculated
-                        double range = 0.99 - max;
-                        
-                        // The new parameter value is the range multiplied by the porpotion
-                        // set by FAST.  Reset the value of foo for below.
-                        foo = String.valueOf(range * Double.parseDouble(foo));
-                        
-                    } else if (parName.equals("dprst_frac_hru")) {
-                        // Read the hru_percent_imperv parameter from the parameter file.
-                        double max = ps.getParameter("hru_percent_imperv").getMax();
-                        
-                        // The range of dprst_frac_hru is calculated
-                        double range = 0.99 - max;
-                        
-                        // The new parameter value is the range multiplied by the porpotion
-                        // set by FAST.  Reset the value of foo for below.
-                        foo = String.valueOf(range * Double.parseDouble(foo));
-
-                    } else if (parName.equals("soil_moist_max")) {
-
-                    // These are parameters that depend on each other
-                    // soil_moist_max > soil_rechr_max
-                    // Read the soil_rechr_max parameter from the parameter file.
-                        double max = ps.getParameter("soil_rechr_max").getMax();
-                      
+                    switch (parName) {
+                        case "hru_percent_imperv":
+                            {
+                                // Read the dprst_frac_hru parameter from the parameter file.
+                                double max = ps.getParameter("dprst_frac_hru").getMax();
+                                // The range of hru_percent_imperv is calculated
+                                double range = 0.99 - max;
+                                // The new parameter value is the range multiplied by the porpotion
+                                // set by FAST.  Reset the value of foo for below.
+//                                foo = String.valueOf(range * Double.parseDouble(foo));
+                                break;
+                            }
+                        case "dprst_frac_hru":
+                            {
+                                // Read the hru_percent_imperv parameter from the parameter file.
+                                double max = ps.getParameter("hru_percent_imperv").getMax();
+                                // The range of dprst_frac_hru is calculated
+                                double range = 0.99 - max;
+                                // The new parameter value is the range multiplied by the porpotion
+                                // set by FAST.  Reset the value of foo for below.
+//                                foo = String.valueOf(range * Double.parseDouble(foo));
+                                break;
+                            }
+                        case "soil_moist_max":
+                            {
+                                // These are parameters that depend on each other
+                                // soil_moist_max > soil_rechr_max
+                                // Read the soil_rechr_max parameter from the parameter file.
+                                double max = ps.getParameter("soil_rechr_max").getMax();
+                                break;
+                            }
                     }
                     
                     if (parName.equals("soil_rechr_max")) {
@@ -298,36 +300,31 @@ public class PrmsFast {
             int trial = 1;
             int trialsForThisCpu = 0;
             for (int i = 0; i < numOfCpus; i++) {
-                PrintWriter batchOut = new PrintWriter(new OutputStreamWriter(
-                        new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".bat"))));
-
-                PrintWriter shOut = new PrintWriter(new OutputStreamWriter(
-                        new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".sh"))));
-                
-                PrintWriter slurmOut = new PrintWriter(new OutputStreamWriter(
-                        new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".slurm"))));
-
-                slurmOut.println("#!/bin/bash");
-                slurmOut.println("#SBATCH -p Prod");
-                slurmOut.println("#SBATCH -A Water");
-                slurmOut.println("#SBATCH -J PRMS");
-                slurmOut.println("#SBATCH --output=%J-prms.out");
-                slurmOut.println("#SBATCH --time=0-01:00:00");
-                slurmOut.println("#SBATCH --mail-user=markstro@usgs.gov");
-                slurmOut.println("#SBATCH --mail-type=ALL\n");
-
-                // print out the default parameter (unmodified) run as trial 0 in script 1
-                if (trial == 1) {
-                    name = rootControlFileName + "_0." + extentionControlFileName;
-                    trialControlFile = new File(trialControlDir, name);
-
-                    batchOut.println(executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NUL");
-                    shOut.println(executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NULL");
-                    slurmOut.println("srun " + executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NULL");
-                }
-
-
-                while (trialsForThisCpu < runsPerCpu) {
+                PrintWriter shOut;
+                PrintWriter slurmOut;
+                try (PrintWriter batchOut = new PrintWriter(new OutputStreamWriter(
+                        new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".bat"))))) {
+                    shOut = new PrintWriter(new OutputStreamWriter(
+                            new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".sh"))));
+                    slurmOut = new PrintWriter(new OutputStreamWriter(
+                            new FileOutputStream(new File("./", "sensRun_" + (i + 1) + ".slurm"))));
+                    slurmOut.println("#!/bin/bash");
+                    slurmOut.println("#SBATCH -p Prod");
+                    slurmOut.println("#SBATCH -A Water");
+                    slurmOut.println("#SBATCH -J PRMS");
+                    slurmOut.println("#SBATCH --output=%J-prms.out");
+                    slurmOut.println("#SBATCH --time=0-01:00:00");
+                    slurmOut.println("#SBATCH --mail-user=markstro@usgs.gov");
+                    slurmOut.println("#SBATCH --mail-type=ALL\n");
+                    // print out the default parameter (unmodified) run as trial 0 in script 1
+                    if (trial == 1) {
+                        name = rootControlFileName + "_0." + extentionControlFileName;
+                        trialControlFile = new File(trialControlDir, name);
+                        
+                        batchOut.println(executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NUL");
+                        shOut.println(executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NULL");
+                        slurmOut.println("srun " + executableFile.getCanonicalPath() + " -C\"" + trialControlFile.getCanonicalPath() + "\" > NULL");
+                    }   while (trialsForThisCpu < runsPerCpu) {
                     name = rootControlFileName + "_" + (trial) + "." + extentionControlFileName;
                     trialControlFile = new File(trialControlDir, name);
 
@@ -337,9 +334,7 @@ public class PrmsFast {
 
                     trialsForThisCpu++;
                     trial++;
-                }
-
-                if (remainder > 0) {
+                }   if (remainder > 0) {
                     name = rootControlFileName + "_" + (trial) + "." + extentionControlFileName;
                     trialControlFile = new File(trialControlDir, name);
 
@@ -350,8 +345,7 @@ public class PrmsFast {
                     trial++;
                     remainder--;
                 }
-
-                batchOut.close();
+                }
                 shOut.close();
                 slurmOut.close();
 

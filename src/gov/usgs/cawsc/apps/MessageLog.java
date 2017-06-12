@@ -1,14 +1,5 @@
 package gov.usgs.cawsc.apps;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.prefs.Preferences;
-
 /**
  * A singleton log that stores messages as they are entered
  * <p>

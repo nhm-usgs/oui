@@ -1,12 +1,8 @@
 package org.omscentral.gis.io;
 
-
 import java.util.Vector;
 import java.io.FileInputStream;
 import java.io.InputStream;
-
-import org.omscentral.gis.io.ByteOrderInputStream;
-
 import org.omscentral.gis.model.AttributeModel;
 import org.omscentral.gis.model.DefaultAttributeModel;
 
@@ -25,16 +21,12 @@ import org.omscentral.gis.model.DefaultAttributeModel;
  * @version   $Revision: 1.1.1.1 $ / $Date: 2002/07/12 22:54:59 $
  */
 public class DbfFileParser {
-
   String file;
-
-
 
   /**
    * Constructor for the DbfFileParser object
    *
    * @param shapeFileBase  Description of Parameter
-   * @exception Exception  Description of Exception
    */
   public DbfFileParser(String shapeFileBase) {
     file = shapeFileBase;
@@ -63,7 +55,7 @@ public class DbfFileParser {
     int dbfNumberOfRecords;
     int dbfHeaderLength;
     int dbfRecordLength;
-    Vector<AttributeModel.DbfColumn> dbfColumns = new Vector<AttributeModel.DbfColumn>();
+    Vector<AttributeModel.DbfColumn> dbfColumns = new Vector<>();
 
     dbfLastUpdate = new byte[3];
 
@@ -111,11 +103,11 @@ public class DbfFileParser {
                    : (Object) new Double(dataStr);
               break;
             case AttributeModel.DbfColumn.FIELD_LOGICAL:
-              if ("yYtT".indexOf(dataStr) != -1) {
-                data = new Boolean(true);
+              if ("yYtT".contains(dataStr)) {
+                data = true;
               }
-              else if ("nNfF".indexOf(dataStr) != -1) {
-                data = new Boolean(false);
+              else if ("nNfF".contains(dataStr)) {
+                data = false;
               }
               else {
                 data = new Object();

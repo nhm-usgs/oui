@@ -1,13 +1,11 @@
 package gov.usgs.cawsc.gui;
 
-import gov.usgs.cawsc.gui.WindowFactory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -148,7 +146,7 @@ public class GuiUtilities
         fc.setMultiSelectionEnabled(multiple);
 
         // Show the open-file dialog and let the user choose the file.
-        int returnVal = 0;
+        int returnVal;
 
         fc.setDialogType(JFileChooser.OPEN_DIALOG);
 
@@ -196,7 +194,7 @@ public class GuiUtilities
         Rectangle graphicsBounds = new Rectangle(0, 0, screenSize.width, screenSize.height);
 
         // If the component is null, center on the screen overall
-        Window ancestor = null;
+        Window ancestor;
         if (component == null)
         {
             rect.width = screenSize.width;
@@ -267,6 +265,7 @@ public class GuiUtilities
      * Create a beveled border with an optional title
      * 
      * @param title The title string, or null if none
+     * @param primaryColor
      * @return The compound border consisting of a beveled border within a title border
      */
     public static Border getCompoundBorder(String title, Color primaryColor)

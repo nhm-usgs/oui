@@ -141,17 +141,9 @@ public class SntempParametersFromPrms {
                 }
             }
 
-//            System.out.print ("Outlet(s) is");
-//            for (int i = 0; i < outlets.size(); i++) {
-//                System.out.print (" " + (outlets.get(i).getId() + 1));
-//            }
-//            
-//            System.out.println ();
-
-            for (int i = 0; i < outlets.size(); i++) {
-                Segment seg = outlets.get(i);
+            outlets.stream().forEach((seg) -> {
                 computeTotalContributingArea(seg);
-            }
+            });
 
             String fileName = "SNTemp.csv";
             File outFile = new File(destDir, fileName);
@@ -216,8 +208,8 @@ public class SntempParametersFromPrms {
     }
 
     private static class Segment {
-        private ArrayList<Segment> upStreamSegments;
-        private int id;
+        private final ArrayList<Segment> upStreamSegments;
+        private final int id;
 
         public Segment(int id) {
             this.id = id;

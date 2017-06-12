@@ -72,8 +72,8 @@ public class Csv2ParamFile {
                         parName = parName + "_" + names[i];
                     }
                         
-                    Object vals = null;
-                    Class type = String.class;
+                    Object vals;
+                    Class type;
                     Parameter dp = dps.getParameter(parName);
                     if (dp == null) {
                         System.out.println("Csv2ParamFile: parameter " + parName
@@ -153,8 +153,8 @@ public class Csv2ParamFile {
                     for (int c = 1; c < ctma.getColumnCount(); c++) {
                         String parName = ctma.getColumnName(c);
                         
-                        Object vals = null;
-                        Class type = String.class;
+                        Object vals;
+                        Class type;
                         Parameter dp = dps.getParameter(parName);
                         if (dp == null) {
                             System.out.println("Csv2ParamFile: parameter " + parName
