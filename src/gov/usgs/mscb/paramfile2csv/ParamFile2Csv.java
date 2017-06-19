@@ -4,7 +4,7 @@
  */
 package gov.usgs.mscb.paramfile2csv;
 
-import csvutils.CsvWriter;
+import gov.usgs.mscb.csvutils.CsvWriter;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
