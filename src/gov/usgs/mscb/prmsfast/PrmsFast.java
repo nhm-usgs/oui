@@ -4,7 +4,7 @@
  */
 package gov.usgs.mscb.prmsfast;
 
-import csvutils.CsvTableModelAdaptor;
+import gov.usgs.mscb.csvutils.CsvTableModelAdaptor;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Level;

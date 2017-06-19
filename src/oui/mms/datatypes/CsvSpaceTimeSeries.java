@@ -1,6 +1,6 @@
 package oui.mms.datatypes;
 
-import csvutils.CsvTableModelAdaptor;
+import gov.usgs.mscb.csvutils.CsvTableModelAdaptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;

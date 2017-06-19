@@ -4,8 +4,8 @@
  */
 package oui.util.pf2snt;
 
-import csvutils.CsvTableModelAdaptor;
-import csvutils.CsvWriter;
+import gov.usgs.mscb.csvutils.CsvTableModelAdaptor;
+import gov.usgs.mscb.csvutils.CsvWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

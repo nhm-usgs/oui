@@ -4,7 +4,7 @@
  */
 package gov.usgs.mscb.paramfile2csv;
 
-import csvutils.CsvTableModelAdaptor;
+import gov.usgs.mscb.csvutils.CsvTableModelAdaptor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

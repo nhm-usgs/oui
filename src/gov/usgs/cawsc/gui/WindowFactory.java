@@ -348,7 +348,7 @@ public class WindowFactory {
     }
 
     public static void displayInFrame(Component content, String title) {
-        WindowFactory.instance().createFrameFor(content, title);
+// markstro        WindowFactory.instance().createFrameFor(content, title);
         WindowFactory.instance().displayInWindow(content);
     }
 
