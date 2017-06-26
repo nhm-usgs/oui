@@ -4,7 +4,7 @@ import getpass
 from time import gmtime, strftime
 
 GIT = "C:/Program Files (x86)/Git/cmd/git.exe"
-JAVAC = "C:/Program Files/Java/jdk1.7.0_60/bin/javac"
+JAVAC = "C:/Program Files/Java/jdk1.8.0_131/bin/javac"
 VERSION_FILE = "version.properties"
 
 def get_git_revision_hash():
@@ -14,7 +14,7 @@ def get_git_origin():
     return subprocess.check_output([GIT, 'config', '--get', 'remote.origin.url'])
 
 def get_git_tag():
-    tag = subprocess.check_output([GIT, 'name-rev', '--tags', '--name-only', '$(git rev-parse HEAD)'])
+    tag = subprocess.check_output([GIT, 'tag'])
     if (len(tag) == 0):
         return "\n"
     else:
