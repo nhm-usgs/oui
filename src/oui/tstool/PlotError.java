@@ -30,7 +30,6 @@ public class PlotError {
             for (int i1 = 0; i1 < dates1.length; i1++) {
                 if ((int)dates0[i0] == (int)dates1[i1]) {
                     count++;
-                    continue;
                 }
             }
         }
@@ -45,7 +44,6 @@ public class PlotError {
                     error[count] = vals0[i0] - vals1[i1];
                     dates[count] = dates0[i0];
                     count++;
-                    continue;
                 }
             }
         }

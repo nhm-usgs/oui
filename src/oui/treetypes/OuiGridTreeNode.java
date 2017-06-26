@@ -12,7 +12,6 @@ import org.omscentral.gis.model.FPRasterTheme;
 import org.omscentral.gis.model.FPRasterModel;
 import java.io.IOException;
 import org.omscentral.gis.io.ArcGridReader;
-import oui.gui.OuiGui;
 
 /** This class contains the necessary information to register an ascii grid
  * file with the Object User Interface (OUI). Other classes are available for
@@ -48,7 +47,6 @@ public class OuiGridTreeNode extends OuiThemeTreeNode {
     
     /** Create an OuiShapeGridNode.
      * @param n The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public OuiGridTreeNode(Node n) {
         super(n);
@@ -59,13 +57,8 @@ public class OuiGridTreeNode extends OuiThemeTreeNode {
             System.out.println("error with theme " + _name + ".  No theme specified.");
         } else {
             _type = "ESRI ASCII Grid";   // overrides OuiTreeNode
-            
-            if (_file_name == null) {
-                _has_map = false;             // overrides OuiTreeNode
-            } else {
-                _has_map = true;             // overrides OuiTreeNode
-            }
-
+            _has_map = _file_name != null; // overrides OuiTreeNode
+            // overrides OuiTreeNode
 //            file_name = new String(Oui.project_dir + "shapes/"
 //            + _theme_name + ".dat");
         }
@@ -73,6 +66,7 @@ public class OuiGridTreeNode extends OuiThemeTreeNode {
     /** Load the theme for this node for the OUI map.
      * @return The GIS theme for this node.
      */
+    @Override
     public Theme loadTheme() {
         FPRasterTheme rt = null;
         

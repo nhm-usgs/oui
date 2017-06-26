@@ -7,7 +7,6 @@
 package oui.treetypes;
 
 import org.w3c.dom.Node;
-import oui.gui.OuiGui;
 
 /**This abstract class is a template to register an executable model
  * with the Object User Interface (OUI). The information describing the model
@@ -39,7 +38,6 @@ public abstract class OuiModelTreeNode extends OuiTreeNode {
     
     /** Create an OuiModelTreeNode.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public OuiModelTreeNode(Node xml_node) {
         super(xml_node);

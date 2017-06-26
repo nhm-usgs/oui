@@ -100,13 +100,15 @@ public class GdbCsvReader {
                 }
                 r++;
             }
-        } catch (Exception e) {
+        } catch (IOException | NumberFormatException | ParseException e) {
             System.out.println(this.getClass().toString() + ": Problem parsing file " + path);
             System.out.println("line = " + line);
             System.out.println("token number " + (c+1));
             throw (e);
         } finally {
-            br.close();
+            if (br != null) {
+                br.close();
+            }
         }
 
     }
@@ -115,7 +117,7 @@ public class GdbCsvReader {
         try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
             byte[] c = new byte[1024];
             int count = 0;
-            int readChars = 0;
+            int readChars;
             boolean endsWithoutNewLine = false;
             while ((readChars = is.read(c)) != -1) {
                 for (int i = 0; i < readChars; ++i) {

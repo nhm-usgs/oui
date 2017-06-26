@@ -17,8 +17,8 @@ import oui.mms.datatypes.ParameterSet;
  * @version 2.0
  */
 public class ParamToolTableModel extends AbstractTableModel {
-    private Object selection;
-    private ParameterSet mms_params;
+    private final Object selection;
+    private final ParameterSet mms_params;
     
     public ParamToolTableModel(ParameterSet mms_params, Object selection) {
         this.mms_params = mms_params;
@@ -107,7 +107,7 @@ public class ParamToolTableModel extends AbstractTableModel {
         if (selection == ParamToolTreeModel.dimensionSizes) {  // This is dimension sizes
             Dimension dim = mms_params.getDimensionAt(rowIndex);
 //            Dimension dim = (Dimension)(dims[rowIndex]);
-            return new Integer(dim.getSize());
+            return dim.getSize();
             
         } else {
             String toString = selection.toString();
@@ -119,13 +119,13 @@ public class ParamToolTableModel extends AbstractTableModel {
                     param = (Parameter) (mms_params.getParameter(selection.toString()));
                     int index = (columnIndex * param.getDimension(0).getSize()) + rowIndex;
                     if (param.getType() == Integer.class) {
-                        return new Integer(((int[]) (param.getVals()))[index]);
+                        return ((int[]) (param.getVals()))[index];
                     } else if (param.getType() == Double.class) {
-                        return new Double(((double[]) (param.getVals()))[index]);
+                        return ((double[]) (param.getVals()))[index];
                     } else if (param.getType() == Float.class) {
-                        return new Float(((float[]) (param.getVals()))[index]);
+                        return ((float[]) (param.getVals()))[index];
                     } else { // DANGER not sure what to do here
-                        return new Double(((double[]) (param.getVals()))[index]);
+                        return ((double[]) (param.getVals()))[index];
                     }
 
                 } else {  // This is a dimension name; process 1D parameters for this dimension
@@ -133,27 +133,27 @@ public class ParamToolTableModel extends AbstractTableModel {
 
                     if (param.getType() == Integer.class) {
                         int int_val = ((int[]) (param.getVals()))[rowIndex];
-                        return new Integer(int_val);
+                        return int_val;
 
                     } else if (param.getType() == Float.class) {
                         float flo_val = ((float[]) (param.getVals()))[rowIndex];
-                        return new Float(flo_val);
+                        return flo_val;
 
                     } else if (param.getType() == Double.class) {
                         double dub_val = ((double[]) (param.getVals()))[rowIndex];
-                        return new Double(dub_val);
+                        return dub_val;
 
                     } else if (param.getType() == String.class) {
                         String str_val = ((String[]) (param.getVals()))[rowIndex];
                         return str_val;
 
                     } else {
-                        ParamTool.paramToolLogger.log(Level.SEVERE, "Unknown data type {0} for dimension {1}, parameter {2}", new Object[]{param.getType().toString(), dim.getName(), param.getName()});
+                        ParamTool.PARAMTOOLLOGGER.log(Level.SEVERE, "Unknown data type {0} for dimension {1}, parameter {2}", new Object[]{param.getType().toString(), dim.getName(), param.getName()});
                         return null;
                     }
                 }
             } catch (NullPointerException e) {
-                ParamTool.paramToolLogger.log(Level.SEVERE, "Null pointer for dimension {0}, parameter {1}", new Object[]{dim.getName(), param.getName()});
+                ParamTool.PARAMTOOLLOGGER.log(Level.SEVERE, "Null pointer for dimension {0}, parameter {1}", new Object[]{dim.getName(), param.getName()});
                 return null;
             }
         }
@@ -173,7 +173,7 @@ public class ParamToolTableModel extends AbstractTableModel {
         
         if (selection == ParamToolTreeModel.dimensionSizes) {  // This is dimension sizes
             Dimension dim = mms_params.getDimensionAt(rowIndex);
-            mms_params.setDimension(dim, ((Integer)aValue).intValue());
+            mms_params.setDimension(dim, ((Integer)aValue));
             
         } else {
             Dimension dim = (Dimension)(mms_params.getDimension(selection.toString()));

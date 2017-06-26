@@ -11,19 +11,16 @@ import oui.mms.io.MmsDefaultParamsReader;
 import oui.mms.io.MmsParamsReader;
 
 public class ParamTool extends GuiProgram{
+    private final ParamToolGui mpeg;
+    public static final Logger PARAMTOOLLOGGER = Logger.getLogger(ParamTool.class.getName());
 
-    private ParamToolGui mpeg;
-    public static final Logger paramToolLogger = Logger.getLogger(ParamTool.class.getName());
-
-    {
+    static {
         try {
             Handler fh = new FileHandler("paramTool.log");
             fh.setFormatter(new SimpleFormatter());
-            paramToolLogger.addHandler(fh);
-        } catch (IOException ex) {
-            paramToolLogger.log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            paramToolLogger.log(Level.SEVERE, null, ex);
+            PARAMTOOLLOGGER.addHandler(fh);
+        } catch (IOException | SecurityException ex) {
+            PARAMTOOLLOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -52,13 +49,13 @@ public class ParamTool extends GuiProgram{
 //                ps.writeHistory(false);
                     mpe = new ParamTool(ps);
                 } catch (IOException ex) {
-                    paramToolLogger.log(Level.SEVERE, null, ex);
+                    PARAMTOOLLOGGER.log(Level.SEVERE, null, ex);
                 }
             } else {
                 usage(args[0]);
             }
 
-            } else if (args.length == 2) {
+        } else if (args.length == 2) {
             try {
                 File test = new File(args[0]);
                 if (!test.exists()) {
@@ -79,15 +76,17 @@ public class ParamTool extends GuiProgram{
                 ParameterSet defaults = default_reader.read();
                 mpe = new ParamTool(ps, defaults);
             } catch (IOException ex) {
-                paramToolLogger.log(Level.SEVERE, null, ex);
+                PARAMTOOLLOGGER.log(Level.SEVERE, null, ex);
             }
 
-            } else {
-                usage(null);
-                return;
-            }
+        } else {
+            usage(null);
+            return;
+        }
 
+        if (mpe != null) {
             mpe.setTopLevel(true);
+        }
     }
 
     private static void usage(String fileName) {

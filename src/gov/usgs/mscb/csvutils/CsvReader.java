@@ -1521,6 +1521,7 @@ public class CsvReader {
      *
      * @throws java.lang.Throwable
      */
+    @Override
     protected void finalize() throws Throwable {
         try {
             close(false);

@@ -8,7 +8,6 @@ package oui.treetypes;
 
 import gov.usgs.cawsc.gui.WindowFactory;
 import java.awt.Color;
-import java.awt.geom.Ellipse2D;
 import org.w3c.dom.Node;
 import org.omscentral.gis.model.Theme;
 import org.omscentral.gis.ui.panel.AbstractVectorThemeColorModel;
@@ -84,7 +83,6 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
     
     /** Create an OuiShapeTreeNode.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public OuiShapeTreeNode(Node xml_node) {
         super(xml_node);
@@ -141,7 +139,7 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
      * @param is_activated Set to true activates the node. False, de-activates the node.
      */
     public void activate(Boolean is_activated) {
-        if (is_activated.booleanValue()) {
+        if (is_activated) {
             if (OuiGui.getLoadedPanel().getActivatedNode() != null) {
                 OuiGui.getOuiGisPanel().setSelection(OuiGui.getLoadedPanel().getActivatedNode().getTheme(), false);
             }
@@ -161,7 +159,7 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
      * @param is_table_shown Turn the table on or off.
      */
     public void showTable(Boolean is_table_shown) {
-        if (is_table_shown.booleanValue()) {
+        if (is_table_shown) {
             if (table_frame == null) {
                 table_frame = new OuiDbfAttributeEditor(this);
                 String title = "GIS Attribute Tool: " + this.getName();
@@ -192,7 +190,7 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
                 OuiGui.getOuiGisPanel().setLabelIndex(_theme, label_index);
             }
 
-            OuiGui.getOuiGisPanel().setLabelsVisible(_theme, labels_displayed.booleanValue());
+            OuiGui.getOuiGisPanel().setLabelsVisible(_theme, labels_displayed);
             OuiGui.getOuiGisPanel().tVrepaint();
         }
     }
@@ -206,21 +204,14 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
      * @return Is the dbf attribute table for this node displayed?
      */
     public Boolean isTableShown() {
-        if (table_frame == null) {
-            return false;
-        }
-        return true;
+        return table_frame != null;
     }
     
     /** Return the activation state for this node.
      * @return Is this node activated?
      */
     public Boolean isActivated() {
-        if (OuiGui.getLoadedPanel().getActivatedNode() == this) {
-            return true;
-        } else {
-            return false;
-        }
+        return OuiGui.getLoadedPanel().getActivatedNode() == this;
     }
     
     /** Return true because this class always has a dbf attribute table.
@@ -279,6 +270,7 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
     /** Load the theme for this node for the OUI map.
      * @return The GIS theme for this node.
      */
+    @Override
     public Theme loadTheme() {
         VectorTheme vt = null;
         
@@ -323,8 +315,8 @@ public class OuiShapeTreeNode extends OuiThemeTreeNode {
             return;
         }
         
-        fill_colors = new HashMap<String, Color>();
-        border_colors = new HashMap<String, Color>();
+        fill_colors = new HashMap<>();
+        border_colors = new HashMap<>();
 
         fill_colors.put("black", new Color(0, 0, 0, 50));
         fill_colors.put("blue", new Color(0, 0, 255, 50));

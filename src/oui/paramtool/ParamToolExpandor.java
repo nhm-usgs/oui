@@ -89,7 +89,7 @@ public class ParamToolExpandor {
                         str = str + "," + paramCheck.getDimension(i);
                     }
 
-                    ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\" needs to be expanded. {1}",
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\" needs to be expanded. {1}",
                             new Object[]{p.getName(), str});
 
                     // convert "one" to anything
@@ -139,7 +139,7 @@ public class ParamToolExpandor {
                         }
 
                         p.setVals(val);
-                        ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\"  expanded!",
+                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\"  expanded!",
                                 new Object[]{p.getName()});
 
                         // convert 1D to 1D
@@ -225,7 +225,7 @@ public class ParamToolExpandor {
                             }
 
                             p.setVals(val);
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\"  expanded!",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\"  expanded!",
                                     new Object[]{p.getName()});
 
                             // convert "nhru" to "nhru,nmonths"
@@ -289,7 +289,7 @@ public class ParamToolExpandor {
                             }
 
                             p.setVals(val);
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\"  expanded!",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\"  expanded!",
                                     new Object[]{p.getName()});
                         }
                     }  // end of 1D to 2D conversion code
@@ -304,12 +304,12 @@ public class ParamToolExpandor {
     // This is a hack, but will work as long as the mapping parameter names
     // do not change. Not sure what else to do. This method was converted from
     // the mmf c file "read_params.c".
-    private final static String dimNames[] = {"nhru", "nsegment",
+    private final static String DIMNAMES[] = {"nhru", "nsegment",
         "nrain", "ntemp", "nobs", "ngw",
         "nssr"
     };
     
-    private final static String mapParamNames[] = {"hru_subbasin", "segment_subbasin",
+    private final static String MAPPARAMNAMES[] = {"hru_subbasin", "segment_subbasin",
         "rain_subbasin", "temp_subbasin", "obs_subbasin", "gw_subbasin",
         "ssr_subbasin"
     };
@@ -319,9 +319,9 @@ public class ParamToolExpandor {
         int i;
 
         mapParamName = null;
-        for (i = 0; i < dimNames.length; i++) {
-            if (name.equals(dimNames[i])) {
-                mapParamName = mapParamNames[i];
+        for (i = 0; i < DIMNAMES.length; i++) {
+            if (name.equals(DIMNAMES[i])) {
+                mapParamName = MAPPARAMNAMES[i];
             }
         }
 

@@ -52,7 +52,6 @@ public class OuiTreeNode {
     /** Create an OuiTreeNode. An object of this class or sub-class can be displayed
      * in the OUI data tree.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
         
     public OuiTreeNode(Node xml_node) {
@@ -60,15 +59,16 @@ public class OuiTreeNode {
         OuiProjectXml pxml = OuiProjectXml.getOuiProjectXml();
         
         if (xml_node != null) {
-            _name = pxml.getElementContent(xml_node, "@name", "no name");
-            _type = pxml.getElementContent(xml_node, "@type", "");
-            _desc = pxml.getElementContent(xml_node, "@desc", "");
+            _name = OuiProjectXml.getElementContent(xml_node, "@name", "no name");
+            _type = OuiProjectXml.getElementContent(xml_node, "@type", "");
+            _desc = OuiProjectXml.getElementContent(xml_node, "@desc", "");
         }
     }
     
     /** Return a printable version of this tree node.
      * @return A printable version of this tree node.
      */
+    @Override
     public String toString() {return _name;}
 
     /** Return the name of the tree node.

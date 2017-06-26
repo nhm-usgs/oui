@@ -30,7 +30,6 @@ public abstract class OuiDataTreeNode extends OuiShapeTreeNode {
     
     /** Create an OuiDataTreeNode object.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public OuiDataTreeNode(Node xml_node) {
         super(xml_node);
@@ -49,7 +48,7 @@ public abstract class OuiDataTreeNode extends OuiShapeTreeNode {
      */
     public void setQueryMode(Boolean query_mode) {
         in_query_mode = query_mode;
-        if (in_query_mode.booleanValue()) {
+        if (in_query_mode) {
             OuiGui.getLoadedPanel().setQueryNode(this);
         } else {
             OuiGui.getLoadedPanel().setQueryNode(null);

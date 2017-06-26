@@ -23,7 +23,7 @@ import oui.mms.OuiProjectXml;
  */
 public class Oui extends GuiProgram {
 
-    private static final Logger logger = Logger.getLogger(Oui.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Oui.class.getName());
     public static Level ouiLogLevel = Level.OFF;
 
     public Oui(String xml_file_name) {
@@ -38,7 +38,7 @@ public class Oui extends GuiProgram {
             VersionInfo.getValForTok("BUILDDATE")
         };
 
-        logger.log(Level.INFO, "Oui started with {0}\n  SHA = {1}\n  ORIGIN = {2}\n  "
+        LOGGER.log(Level.INFO, "Oui started with {0}\n  SHA = {1}\n  ORIGIN = {2}\n  "
                 + "TAG = {3}\n  COMMITDATE = {4}\n  COMPILER = {5}\n  OS_Version = {6}\n  "
                 + "BUILDER = {7}\n  BUILDDATE = {8}", vals);
 
@@ -59,16 +59,14 @@ public class Oui extends GuiProgram {
         try {
             Handler fh = new FileHandler("oui.log");
             fh.setFormatter(new SimpleFormatter());
-            logger.addHandler(fh);
+            LOGGER.addHandler(fh);
 
             if (args.length == 1) {
                 Oui oui = new Oui(args[0]);
             } else {
                 System.out.println("Usage: java -jar oui.jar <project.xml>");
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Oui.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
+        } catch (IOException | SecurityException ex) {
             Logger.getLogger(Oui.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

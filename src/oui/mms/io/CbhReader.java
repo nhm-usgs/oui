@@ -202,13 +202,14 @@ public class CbhReader {
                 
                 st = new StringTokenizer(line, " ");
                 
-                String tok;
-                tok = st.nextToken();
-                tok = st.nextToken();
-                tok = st.nextToken();
-                tok = st.nextToken();
-                tok = st.nextToken();
-                tok = st.nextToken();
+                String yr, mo, da, hr, mi, se;
+                yr = st.nextToken();
+                mo = st.nextToken();
+                da = st.nextToken();
+                hr = st.nextToken();
+                mi = st.nextToken();
+                se = st.nextToken();
+//                System.out.println (yr + " " + mo + " " + da + " " + i);
                 for (j = 0; j < numberOfColumns; j++) {
                     allData[j][i] = Double.valueOf(st.nextToken());
                 }

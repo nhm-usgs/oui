@@ -50,7 +50,7 @@ public class ParamToolFileFixer {
                 Parameter paramCheck = default_ps.getParameter(p.getName());
 
                 if (paramCheck == null) {
-                    ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\" is in the parameter file, but is not used by this PRMS application. Deleting it.", new Object[]{p.getName()});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\" is in the parameter file, but is not used by this PRMS application. Deleting it.", new Object[]{p.getName()});
                     mms_params.remove(p);
                 }
             }
@@ -65,7 +65,7 @@ public class ParamToolFileFixer {
             Parameter paramCheck = mms_params.getParameter(p.getName());
 
             if (paramCheck == null) {
-                ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}\" is used by this PRMS application, but is not in the parameter file. Adding it.", new Object[]{p.getName()});
+                ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}\" is used by this PRMS application, but is not in the parameter file. Adding it.", new Object[]{p.getName()});
                 mms_params.addParameter(p);
             }
         }
@@ -85,7 +85,7 @@ public class ParamToolFileFixer {
                     if (val[i] == -999) {
                         int defVal = Integer.parseInt(default_ps.getParameter(p.getName()).getDefaultVal());
                         val[i] = defVal;
-                        ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
+                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
                     }
                 }
 
@@ -96,7 +96,7 @@ public class ParamToolFileFixer {
                     if (val[i] < -998.0 && val[i] > -1000.0) {
                         float defVal = Float.parseFloat(default_ps.getParameter(p.getName()).getDefaultVal());
                         val[i] = defVal;
-                        ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
+                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
                     }
                 }
 
@@ -107,7 +107,7 @@ public class ParamToolFileFixer {
                     if (val[i] < -998.0 && val[i] > -1000.0) {
                         double defVal = Double.parseDouble(default_ps.getParameter(p.getName()).getDefaultVal());
                         val[i] = defVal;
-                        ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
+                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
                     }
                 }
 
@@ -118,7 +118,7 @@ public class ParamToolFileFixer {
                     if (val[i].contains("-999")) {
                         String defVal = default_ps.getParameter(p.getName()).getDefaultVal();
                         val[i] = defVal;
-                        ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
+                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is specified with the missing value flag. Setting to defalut value {2}", new Object[]{p.getName(), (i + 1), defVal});
                     }
                 }
             }
@@ -142,18 +142,18 @@ public class ParamToolFileFixer {
                         if (val[i] < lo) {
                             int defVal = Integer.parseInt(default_ps.getParameter(p.getName()).getLowBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
 
                         } else if (val[i] > hi) {
                             int defVal = Integer.parseInt(default_ps.getParameter(p.getName()).getUpBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
                         }
                     }
                 } catch (NumberFormatException e) {
-                    ParamTool.paramToolLogger.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
 
                 }
 
@@ -166,17 +166,17 @@ public class ParamToolFileFixer {
                         if (val[i] < lo) {
                             float defVal = Float.parseFloat(default_ps.getParameter(p.getName()).getLowBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
                         } else if (val[i] > hi) {
                             float defVal = Float.parseFloat(default_ps.getParameter(p.getName()).getUpBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
                         }
                     }
                 } catch (Exception e) {
-                    ParamTool.paramToolLogger.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
                 }
 
             } else if (p.getType() == Double.class) {
@@ -188,21 +188,21 @@ public class ParamToolFileFixer {
                         if (val[i] < lo) {
                             double defVal = Double.parseDouble(default_ps.getParameter(p.getName()).getLowBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is < lower bound. Setting to lower bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
                         } else if (val[i] > hi) {
                             double defVal = Double.parseDouble(default_ps.getParameter(p.getName()).getUpBound());
                             val[i] = defVal;
-                            ParamTool.paramToolLogger.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
+                            ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "Parameter \"{0}[{1}]\" is > upper bound. Setting to upper bound {2}",
                                     new Object[]{p.getName(), (i + 1), defVal});
                         }
                     }
                 } catch (Exception e) {
-                    ParamTool.paramToolLogger.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
                 }
 
             } else if (p.getType() == String.class) {
-                ParamTool.paramToolLogger.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
+                ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "No range check available for parameter \"{0}\"", new Object[]{p.getName()});
             }
         }
 
@@ -218,7 +218,7 @@ public class ParamToolFileFixer {
         for (int i = 0; i < srmVals.length; i++) {
             if (srmVals[i] > smmVals[i]) {
                 srmVals[i] = smmVals[i];
-                ParamTool.paramToolLogger.log(Level.INFO, "soil_rechr_max[{0}] is greter than soil_moist_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), smmVals[i]});
+                ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "soil_rechr_max[{0}] is greter than soil_moist_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), smmVals[i]});
             }
         }
 
@@ -234,7 +234,7 @@ public class ParamToolFileFixer {
         for (int i = 0; i < srmVals.length; i++) {
             if (sriVals[i] > srmVals[i]) {
                 sriVals[i] = srmVals[i];
-                ParamTool.paramToolLogger.log(Level.INFO, "soil_rechr_init[{0}] is greter than soil_rechr_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), srmVals[i]});
+                ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "soil_rechr_init[{0}] is greter than soil_rechr_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), srmVals[i]});
             }
         }
 
@@ -250,7 +250,7 @@ public class ParamToolFileFixer {
         for (int i = 0; i < smmVals.length; i++) {
             if (smiVals[i] > smmVals[i]) {
                 smiVals[i] = smmVals[i];
-                ParamTool.paramToolLogger.log(Level.INFO, "soil_moist_init[{0}] is greter than soil_moist_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), smmVals[i]});
+                ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "soil_moist_init[{0}] is greter than soil_moist_max[{1}] resetting value to {2}", new Object[]{(i + 1), (i + 1), smmVals[i]});
             }
         }
 
@@ -263,20 +263,20 @@ public class ParamToolFileFixer {
             for (int i = 0; i < kVals.length; i++) {
                 if (kVals[i] < 1.0) {
                     kVals[i] = 1.0;
-                    ParamTool.paramToolLogger.log(Level.INFO, "K_coef[{0}] is less than 1.0, resetting value to 1.0", new Object[]{(i + 1)});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "K_coef[{0}] is less than 1.0, resetting value to 1.0", new Object[]{(i + 1)});
                 }
             }
         }
 
         System.out.println();
         Parameter x = mms_params.getParameter("x_coef");
-        double[] xVals = null;
+        double[] xVals;
         if (x != null) {
             xVals = (double[]) (x.getVals());
             for (int i = 0; i < xVals.length; i++) {
                 if (xVals[i] > 0.5) {
                     xVals[i] = 0.5;
-                    ParamTool.paramToolLogger.log(Level.INFO, "x_coef[{0}] is greater than 0.5, resetting value to 0.5", new Object[]{(i + 1)});
+                    ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "x_coef[{0}] is greater than 0.5, resetting value to 0.5", new Object[]{(i + 1)});
                 }
             }
         }
@@ -305,12 +305,12 @@ public class ParamToolFileFixer {
                 }
 
                 double x_max = Ts / (2.0 * kVals[i]);
-                if (kVals != null) {
-                    if (xVals[i] > x_max) {
-                        xVals[i] = x_max * 0.99;
-                        ParamTool.paramToolLogger.log(Level.INFO, "x_coef[{0}] is too large for the internal time step, resetting value to {1}", new Object[]{(i + 1), xVals[i]});
-                    }
-                }
+//                if (kVals != null) {
+//                    if (xVals[i] > x_max) {
+//                        xVals[i] = x_max * 0.99;
+//                        ParamTool.PARAMTOOLLOGGER.log(Level.INFO, "x_coef[{0}] is too large for the internal time step, resetting value to {1}", new Object[]{(i + 1), xVals[i]});
+//                    }
+//                }
             }
         }
     }

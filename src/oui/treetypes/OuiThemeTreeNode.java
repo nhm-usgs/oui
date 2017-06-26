@@ -8,8 +8,6 @@ package oui.treetypes;
 
 import org.omscentral.gis.model.Theme;
 import org.w3c.dom.Node;
-import oui.gui.OuiGISPanel;
-import oui.gui.Oui;
 import oui.gui.OuiGui;
 import oui.mms.OuiProjectXml;
 
@@ -24,20 +22,19 @@ import oui.mms.OuiProjectXml;
  */
 public abstract class OuiThemeTreeNode extends OuiTreeNode {
     
-    protected Boolean _displayed = new Boolean(false);
+    protected Boolean _displayed = false;
     protected Theme _theme;
     protected String _theme_name;
     protected String _file_name;
     
     /** Create an OuiThemeTreeNode.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     
     public OuiThemeTreeNode(Node xml_node) {
         super(xml_node);
         OuiProjectXml pxml = OuiProjectXml.getOuiProjectXml();
-        _theme_name = pxml.getElementContent(xml_node, "@theme", "no theme");
+        _theme_name = OuiProjectXml.getElementContent(xml_node, "@theme", "no theme");
         String path = pxml.getPath (pxml.getThemeMetaData(_theme_name, "@path", null));
         _file_name = path + "/" + pxml.getThemeMetaData(_theme_name, "@file_name", null);
     }
@@ -48,7 +45,7 @@ public abstract class OuiThemeTreeNode extends OuiTreeNode {
     public void setDisplayed(Boolean d) {
         if (_displayed.booleanValue() == d.booleanValue()) {
             
-        } else if (!_displayed.booleanValue() && d.booleanValue()) {
+        } else if (!_displayed && d) {
             if (_theme == null) {
                 _theme = loadTheme();
                 OuiGui.getOuiGisPanel().addTheme(_theme);
@@ -56,19 +53,19 @@ public abstract class OuiThemeTreeNode extends OuiTreeNode {
             
             if (_theme != null) {
                 OuiGui.getOuiGisPanel().setThemeVisible(_theme, true);
-                _displayed = new Boolean(true);
+                _displayed = true;
             }
             
         } else {
             OuiGui.getOuiGisPanel().setThemeVisible(_theme, false);
-            _displayed = new Boolean(false);
+            _displayed = false;
         }
     }
     
     /** Remove the theme for this node from the OUI map.
      */
     public void removeTheme() {
-        _displayed = new Boolean(false);
+        _displayed = false;
         OuiGui.getOuiGisPanel().removeTheme(_theme);
         _theme = null;
     }
