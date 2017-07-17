@@ -19,12 +19,13 @@ import oui.util.concurrent.CommandRunner;
  *
  * @author  markstro
  */
-public class MmsOuiEspRun  {
-
-    public static void writeEspDataFiles(EnsembleData ed, int initLength, String inputDataFile, String destDir, OuiCalendar forecastStart, OuiCalendar forecastEnd) {
-        ArrayList<TimeSeries> forecasts = new ArrayList ();
-        ArrayList<TimeSeries> historic = new ArrayList ();
-        ArrayList<TimeSeries> input = new ArrayList ();
+public class MmsOuiEspRun {
+    public static void writeEspDataFiles(EnsembleData ed, int initLength,
+            String inputDataFile, String destDir, OuiCalendar forecastStart,
+            OuiCalendar forecastEnd) {
+        ArrayList<TimeSeries> forecasts = new ArrayList();
+        ArrayList<TimeSeries> historic = new ArrayList();
+        ArrayList<TimeSeries> input = new ArrayList();
         
         MmsDataFileReader dataFileReader = new MmsDataFileReader(inputDataFile);
         OuiCalendar data_file_start = dataFileReader.getStart();
@@ -39,15 +40,17 @@ public class MmsOuiEspRun  {
  *  The init_start date is two years before the forecast start date.
  *  The init_end data is one day before the forecast start date.
  */        
-        OuiCalendar init_start = new OuiCalendar();
+        OuiCalendar init_start = OuiCalendar.getInstance();
         init_start.setJulian(forecastStart.getJulian() - initLength);
 
-        OuiCalendar init_end = new OuiCalendar();
+        OuiCalendar init_end = OuiCalendar.getInstance();
         init_end.setJulian(forecastStart.getJulian() - 1.0);
 
-        ed.setInitialization(new TimeSeries ("init", null, null, init_start, init_end, "init", dataFileReader.getFileName(), "unknown"));
+        ed.setInitialization(new TimeSeries ("init", null, null, init_start,
+                init_end, "init", dataFileReader.getFileName(), "unknown"));
 
-        int init_offset = (int)(init_start.getJulian()) - (int)(data_file_start.getJulian());  //  this is the  offset from the start of the data to the start of the init period
+        //  this is the  offset from the start of the data to the start of the init period
+        int init_offset = (int)(init_start.getJulian()) - (int)(data_file_start.getJulian());
         
         if (init_start.before(data_file_start)) {
             System.out.println ("MmsEspRun runESP: init_start is before the start of the data file.");
@@ -57,9 +60,10 @@ public class MmsOuiEspRun  {
  *  new_data_start is the start date that will be associated with the new data file
  *  new_data_end is the end date that will be associated with the new data file
  */
-        OuiCalendar new_data_start = (OuiCalendar)(init_start.clone());
-        OuiCalendar new_data_end = (OuiCalendar)(forecastEnd.clone());
-        int new_data_length = (int)(new_data_end.getJulian() - (int)(new_data_start.getJulian()) + 1);
+        OuiCalendar new_data_start = OuiCalendar.getClone(init_start);
+        OuiCalendar new_data_end = OuiCalendar.getClone(forecastEnd);
+        int new_data_length = (int)(new_data_end.getJulian()
+                - (int)(new_data_start.getJulian()) + 1);
 
         double[][] new_data = new double[num_of_columns][new_data_length];
 
@@ -76,19 +80,27 @@ public class MmsOuiEspRun  {
  *  historic_start is the start date of the historic period used to generate the trace
  *  historic_end is the end date of the historic period used to generate the trace
  */
-        int forecast_length = (int)(forecastEnd.getJulian()) - (int)(forecastStart.getJulian()) + 1;
-        
-        OuiCalendar historic_start = new OuiCalendar();
-        historic_start.set(data_file_start.getYear(), forecastStart.getMonth(), forecastStart.getDay());
+        int forecast_length = (int) (forecastEnd.getJulian())
+                - (int) (forecastStart.getJulian()) + 1;
 
-        OuiCalendar historic_end = new OuiCalendar();
-        historic_end.setJulian(historic_start.getJulian() + forecast_length);
+        OuiCalendar historic_start = OuiCalendar.getInstance();
+        // DANGER ESP debug for Kate!
+//        historic_start.set(data_file_start.getYear(), forecastStart.getMonth(),
+//                forecastStart.getDay());
+        historic_start.set(data_file_start.getYear(), forecastStart.getMonth() - 1,
+                forecastStart.getDay());
+
+        OuiCalendar historic_end = OuiCalendar.getInstance();
+//        historic_end.setJulian(historic_start.getJulian() + forecast_length);
+        historic_end.setJulian(historic_start.getJulian() + forecast_length - 1);
 
         while (historic_start.before(data_file_start)) {
-            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
+            historic_start.set(historic_start.getYear() + 1,
+                    historic_start.getMonth() - 1, historic_start.getDay());
         }
-        historic_end = new OuiCalendar();
-        historic_end.setJulian(historic_start.getJulian() + forecast_length);
+        historic_end = OuiCalendar.getInstance();
+//        historic_end.setJulian(historic_start.getJulian() + forecast_length);
+        historic_end.setJulian(historic_start.getJulian() + forecast_length - 1);
 
 /*
  *  Loop over trace periods.
@@ -97,8 +109,12 @@ public class MmsOuiEspRun  {
 /*
  *  Write the datafile
  */
-            int trace_offset = (int)(historic_start.getJulian()) - (int)(data_file_start.getJulian());  //  this is the  offset from the start of the data to the start of the trace period
-            MmsDataFileWriter mdfw = new MmsDataFileWriter(new_data_start, new_data_end, header);
+//  this is the  offset from the start of the data to the start of the trace period
+            int trace_offset = (int)(historic_start.getJulian())
+                    - (int)(data_file_start.getJulian());
+            
+            MmsDataFileWriter mdfw = new MmsDataFileWriter(new_data_start,
+                    new_data_end, header);
             
             for (int col = 0; col < num_of_columns; col++) {
                 for (int i = 0; i < forecast_length; i++) {
@@ -106,19 +122,29 @@ public class MmsOuiEspRun  {
                 }
                 mdfw.addTrace(new_data[col]);
             }
-            String file_name = destDir + "/" + ed.getName() + "_ESP_" + historic_start.getYear() + ".data";
+            
+            String file_name = destDir + "/" + ed.getName() + "_ESP_"
+                    + historic_start.getYear() + ".data";
             mdfw.write(file_name);
                         
             String espYear = "" + historic_start.getYear();
+            input.add(new TimeSeries(espYear, null, null,
+                    OuiCalendar.getClone(new_data_start),
+                    OuiCalendar.getClone(new_data_end), "input", file_name, "unknown"));
             
-            input.add(new TimeSeries(espYear, null, null, (OuiCalendar)(new_data_start.clone()), (OuiCalendar)(new_data_end.clone()), "input", file_name, "unknown"));
-            historic.add (new TimeSeries(espYear, null, null, (OuiCalendar)(historic_start.clone()), (OuiCalendar)(historic_end.clone()), "historic", dataFileReader.getFileName(), "unknown"));
-            forecasts.add (new TimeSeries(espYear, null, null, forecastStart, forecastEnd, "forecast", null, "unknown"));
+            historic.add (new TimeSeries(espYear, null, null,
+                    OuiCalendar.getClone(historic_start),
+                    OuiCalendar.getClone(historic_end),
+                    "historic", dataFileReader.getFileName(), "unknown"));
+            
+            forecasts.add (new TimeSeries(espYear, null, null, forecastStart,
+                    forecastEnd, "forecast", null, "unknown"));
 /*
  *  Step to the next trace
  */            
-            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
-            historic_end = new OuiCalendar();
+            historic_start.set(historic_start.getYear() + 1,
+                    historic_start.getMonth() - 1, historic_start.getDay());
+            historic_end = OuiCalendar.getInstance();
             historic_end.setJulian(historic_start.getJulian() + forecast_length);
         }
         ed.setForecasts(forecasts);
@@ -158,7 +184,9 @@ public class MmsOuiEspRun  {
             System.out.println("MmsEspRun.runEsp: " + arg);
             
             CommandRunner.runModel(arg,  null);
-            outputFiles.add(new TimeSeries("" + espYear, null, null, inputTimeSeries.getStart(), inputTimeSeries.getEnd(), espVariableName + " " + espVariableIndex , workspace + "/output/" + statvarfilename, "unknown"));
+            outputFiles.add(new TimeSeries("" + espYear, null, null,
+                    inputTimeSeries.getStart(), inputTimeSeries.getEnd(),
+                    espVariableName + " " + espVariableIndex , workspace + "/output/" + statvarfilename, "unknown"));
         }
         ed.setOutput(outputFiles);
     }
@@ -297,9 +325,9 @@ public class MmsOuiEspRun  {
             String executable = "models/xprms_xyz";
             String envFile = "control/mms.env";
             String controlFileExt = ".xprms_xyz.oui.control";
-            OuiCalendar forecastStart = new OuiCalendar();
+            OuiCalendar forecastStart = OuiCalendar.getInstance();
             forecastStart.setDT("1998-10-01");
-            OuiCalendar forecastEnd = new OuiCalendar();
+            OuiCalendar forecastEnd = OuiCalendar.getInstance();
             forecastEnd.setDT("1999-07-30");
             
             { //  Use this block to generate the ESP run and save to XML file
@@ -307,7 +335,8 @@ public class MmsOuiEspRun  {
                 MmsOuiEspRun.writeEspDataFiles(ed, initLength, data_file, espDataDestDir, forecastStart, forecastEnd);
                 
                 ed.setName(subBasinName);
-                MmsOuiEspRun.runEsp(ed, mms_workspace, executable, envFile, controlFileExt, espOutputDestDir, espVariableName, espVariableIndex);
+                MmsOuiEspRun.runEsp(ed, mms_workspace, executable, envFile,
+                        controlFileExt, espOutputDestDir, espVariableName, espVariableIndex);
                 MmsOuiEspReader.readEsp(ed);
                 
                 ed.save(xml_file);
@@ -319,8 +348,8 @@ public class MmsOuiEspRun  {
             
             EspTool et = new EspTool(ed);
             WindowFactory.displayInFrame(et, "OUI ESP Tool");
-        } catch (oui.mms.datatypes.SetOuiCalendarException e) {}
-
+        } catch (oui.mms.datatypes.SetOuiCalendarException e) {
+        }
     }
 
     static void writeEspCBHFiles(EnsembleData ed, ArrayList<TimeSeries> cbhArray,
@@ -347,15 +376,17 @@ public class MmsOuiEspRun  {
  *  The init_start date is two years before the forecast start date.
  *  The init_end data is one day before the forecast start date.
  */
-        OuiCalendar init_start = new OuiCalendar();
+        OuiCalendar init_start = OuiCalendar.getInstance();
         init_start.setJulian(forecastStart.getJulian() - initLength);
 
-        OuiCalendar init_end = new OuiCalendar();
+        OuiCalendar init_end = OuiCalendar.getInstance();
         init_end.setJulian(forecastStart.getJulian() - 1.0);
 
-        ed.setInitialization(new TimeSeries ("init", null, null, init_start, init_end, "init", cbhReader.getFileName(), "unknown"));
+        ed.setInitialization(new TimeSeries ("init", null, null, init_start,
+                init_end, "init", cbhReader.getFileName(), "unknown"));
 
-        int init_offset = (int)(init_start.getJulian()) - (int)(data_file_start.getJulian());  //  this is the  offset from the start of the data to the start of the init period
+        //  this is the  offset from the start of the data to the start of the init period
+        int init_offset = (int)(init_start.getJulian()) - (int)(data_file_start.getJulian());
 
         if (init_start.before(data_file_start)) {
             System.out.println ("MmsOuiEspRun runESP: init_start is before the start of the data file.");
@@ -365,32 +396,35 @@ public class MmsOuiEspRun  {
  *  new_data_start is the start date that will be associated with the new data file
  *  new_data_end is the end date that will be associated with the new data file
  */
-        OuiCalendar new_data_start = (OuiCalendar)(init_start.clone());
-        OuiCalendar new_data_end = (OuiCalendar)(forecastEnd.clone());
-        int new_data_length = (int)(new_data_end.getJulian() - (int)(new_data_start.getJulian()) + 1);
+        OuiCalendar new_data_start = OuiCalendar.getClone(init_start);
+        OuiCalendar new_data_end = OuiCalendar.getClone(forecastEnd);
+        int new_data_length = (int)(new_data_end.getJulian()
+                - (int)(new_data_start.getJulian()) + 1);
 
 /*
  *  historic_start is the start date of the historic period used to generate the trace
  *  historic_end is the end date of the historic period used to generate the trace
  */
-        int forecast_length = (int)(forecastEnd.getJulian()) - (int)(forecastStart.getJulian()) + 1;
+        int forecast_length = (int)(forecastEnd.getJulian())
+                - (int)(forecastStart.getJulian()) + 1;
 
-        OuiCalendar historic_start = new OuiCalendar();
+        OuiCalendar historic_start = OuiCalendar.getInstance();
 // DANGER ESP debug for Kate!
 //        historic_start.set(data_file_start.getYear(), forecastStart.getMonth(), forecastStart.getDay());
-        historic_start.set(data_file_start.getYear(), forecastStart.getMonth() - 1, forecastStart.getDay());
+//        historic_start.set(data_file_start.getYear(), forecastStart.getMonth() - 1, forecastStart.getDay());
+        historic_start.set(data_file_start.getYear(), forecastStart.getMonth()-1,
+                forecastStart.getDay());
 
-
-        OuiCalendar historic_end = new OuiCalendar();
+        OuiCalendar historic_end = OuiCalendar.getInstance();
         historic_end.setJulian(historic_start.getJulian() + forecast_length);
 
         while (historic_start.before(data_file_start)) {
 // DANGER ESP debug for Kate!
 //            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
-            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
+            historic_start.set(historic_start.getYear() + 1,
+                    historic_start.getMonth() - 1, historic_start.getDay());
         }
-        
-        historic_end = new OuiCalendar();
+        historic_end = OuiCalendar.getInstance();
         historic_end.setJulian(historic_start.getJulian() + forecast_length);
 
 /*
@@ -402,9 +436,9 @@ public class MmsOuiEspRun  {
  */
 // DANGER ESP debug for Kate!
 //            int trace_offset = (int)(historic_start.getJulian()) - (int)(data_file_start.getJulian());  //  this is the  offset from the start of the data to the start of the trace period
-            int trace_offset = (int)(historic_start.getJulian()) - (int)(data_file_start.getJulian()) - 1;  //  this is the  offset from the start of the data to the start of the trace period
+            int trace_offset = (int)(historic_start.getJulian())
+                    - (int)(data_file_start.getJulian());  //  this is the  offset from the start of the data to the start of the trace period
 // 4/1/2013 trace_offset is 23193
-            
             CbhWriter mdfw = new CbhWriter(new_data_start, new_data_end, header);
 
             for (int col = 0; col < num_of_columns; col++) {
@@ -419,25 +453,27 @@ public class MmsOuiEspRun  {
                 // Write in the forecast period values
                 for (int i = 0; i < forecast_length; i++) {
                     // DANGER ESP debug for Kate!
-//                    new_data[i + initLength] = all_data[col][i + trace_offset];
-                    new_data[i + initLength] = all_data[col][i + trace_offset + 1];
+                    new_data[i + initLength] = all_data[col][i + trace_offset];
                 }
                 // Send the trace for the HRU off to the CBH writer.
                 mdfw.addTrace(new_data);
             }
 
             File foo = new File (cbh_file);
-            String file_name = espDataDestDir + "/" + historic_start.getYear() + "_ESP_" + foo.getName();
+            String file_name = espDataDestDir + "/" + historic_start.getYear()
+                    + "_ESP_" + foo.getName();
             mdfw.write(file_name);
 
-            String espYear = "" + historic_start.getYear();
-
-            cbhArray.add(new TimeSeries(espYear, null, null, (OuiCalendar)(new_data_start.clone()), (OuiCalendar)(new_data_end.clone()), "input", file_name, "unknown"));
+            String espYear = "" + historic_start.getYear();       
+            cbhArray.add(new TimeSeries(espYear, null, null,
+                    OuiCalendar.getClone(new_data_start),
+                    OuiCalendar.getClone(new_data_end), "input", file_name, "unknown"));
 /*
  *  Step to the next trace
  */
-            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
-            historic_end = new OuiCalendar();
+            historic_start.set(historic_start.getYear() + 1,
+                    historic_start.getMonth() - 1, historic_start.getDay());
+            historic_end = OuiCalendar.getInstance();
             historic_end.setJulian(historic_start.getJulian() + forecast_length);
         }
     }

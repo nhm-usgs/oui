@@ -1,10 +1,13 @@
 package oui.mms.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
 import oui.mms.datatypes.TimeSeries;
 
@@ -19,7 +22,6 @@ public class CbhReader {
     private String[] variableList = null;
     private double[][] allData = null;
     private String header = null;
-    private String description = null;
     private String fileName = null;
     
     public CbhReader(String fn) {
@@ -28,27 +30,37 @@ public class CbhReader {
     }
     
     public ArrayList<Integer> getMaxIndex() {
-        if (max_index == null) readHeader();
+        if (max_index == null) {
+            readHeader();
+        }
         return this.max_index;
     }
     
     public ArrayList<String> getVarNames() {
-        if (var_names == null) readHeader();
+        if (var_names == null) {
+            readHeader();
+        }
         return this.var_names;
     }
 
     public int getNumberOfColumns() {
-        if (numberOfColumns == -1) readHeader();
+        if (numberOfColumns == -1) {
+            readHeader();
+        }
         return numberOfColumns;
     }
     
     public double[][] getAllData() {
-        if (allData == null) readAllData();
+        if (allData == null) {
+            readAllData();
+        }
         return allData;
     }
     
     public String getHeader() {
-        if (header == null) readHeader();
+        if (header == null) {
+            readHeader();
+        }
         return header;
     }
     
@@ -66,7 +78,9 @@ public class CbhReader {
     }
     
     public double[] getDates() {
-        if (dates == null) readAllData();
+        if (dates == null) {
+            readAllData();
+        }
         return (dates);
     }
     
@@ -76,7 +90,9 @@ public class CbhReader {
  **  Column 6 is the first data column.
  */
     public double[] getValues(int col_num) {
-        if (allData == null) readAllData();
+        if (allData == null) {
+            readAllData();
+        }
         return allData[col_num - 6];
     }
     
@@ -87,7 +103,7 @@ public class CbhReader {
             for (int i = 0; i < var_names.size(); i++) {
                 String var_name = var_names.get(i);
                 Integer foo = max_index.get(i);
-                for (int j = 0; j < foo.intValue(); j++) {
+                for (int j = 0; j < foo; j++) {
                     variableList[count++] = var_name + " " + (j + 1);
                 }
             }
@@ -98,8 +114,9 @@ public class CbhReader {
     public TimeSeries getTimeSeries(String dataName) {
         StringTokenizer st = new StringTokenizer(dataName, " ");
         String var_name = st.nextToken();
-        int index = Integer.valueOf(st.nextToken()).intValue();
-        return new TimeSeries(dataName, getDates(), getValues(var_name, index), getStart(), getEnd(), dataName, fileName, "unknown");
+        int index = Integer.parseInt(st.nextToken());
+        return new TimeSeries(dataName, getDates(), getValues(var_name, index),
+                getStart(), getEnd(), dataName, fileName, "unknown");
     }
     
 /*
@@ -120,7 +137,7 @@ public class CbhReader {
                 break;
             } else {
                 Integer foo = max_index.get(i);
-                col_num = col_num + foo.intValue();
+                col_num = col_num + foo;
             }
         }
         
@@ -134,7 +151,7 @@ public class CbhReader {
     }
     
     private OuiCalendar getDateFromLine(String line) {
-        return getDateFromLine(line, new OuiCalendar ());
+        return getDateFromLine(line, OuiCalendar.getInstance());
     }
     
     private OuiCalendar getDateFromLine(String line, OuiCalendar mdt) {
@@ -194,22 +211,29 @@ public class CbhReader {
             }
                  
             StringTokenizer st;
-            OuiCalendar currentDate = new OuiCalendar ();
+            OuiCalendar currentDate = OuiCalendar.getInstance();
             int i = 0, j, k = 0;
             while ((line = in.readLine()) != null) {
-                dates[i] = getDateFromLine(line, currentDate).getJulian();
-//                System.out.println ("read date = " + currentDate +  " " + currentDate.getJulian() + " offset date = " + (start_time.getJulian() + i)); 
+//                dates[i] = getDateFromLine(line, currentDate).getJulian();
+//                System.out.println ("read date = " + currentDate +  " "
+//                        + currentDate.getJulian() + " " + dates[i] + " "
+//                        + (start_time.getJulian() + i)); 
                 
-                st = new StringTokenizer(line, " ");
-                
-                String yr, mo, da, hr, mi, se;
-                yr = st.nextToken();
-                mo = st.nextToken();
-                da = st.nextToken();
+                int yr, mo, da;
+                String hr, mi, se;
+                st = new StringTokenizer(line);
+                yr = Integer.parseInt(st.nextToken());
+                mo = Integer.parseInt(st.nextToken());
+                da = Integer.parseInt(st.nextToken());
                 hr = st.nextToken();
                 mi = st.nextToken();
                 se = st.nextToken();
-//                System.out.println (yr + " " + mo + " " + da + " " + i);
+                currentDate.set(yr, (mo - 1), da);
+                dates[i] = currentDate.getJulian();
+                        
+//                System.out.println (i + " " + yr + " " + mo + " " + da + " "
+//                        + dates[i] + " " + OuiCalendar.jul2dat(dates[i]));
+                
                 for (j = 0; j < numberOfColumns; j++) {
                     allData[j][i] = Double.valueOf(st.nextToken());
                 }
@@ -242,10 +266,10 @@ public class CbhReader {
     private void readHeader() {
         
         StringTokenizer st;
-        String line = null;
+        String line;
         
-        var_names = new ArrayList<String>(10);
-        max_index = new ArrayList<Integer>(10);
+        var_names = new ArrayList<>(10);
+        max_index = new ArrayList<>(10);
         numberOfColumns = 0;
         
         header = "";
@@ -255,8 +279,7 @@ public class CbhReader {
             String name;
             int size;
             in = new BufferedReader(new FileReader(fileName));
-            line = in.readLine();                      // description line
-            description = line;
+            String description = in.readLine(); 
             line = in.readLine();
             
             while (!(line.startsWith("########"))) {
@@ -266,17 +289,17 @@ public class CbhReader {
                     st = new StringTokenizer(line, " ");
                     name = st.nextToken();
                     var_names.add(name);
-                    size = Integer.valueOf(st.nextToken()).intValue();
-                    max_index.add(new Integer(size));
+                    size = Integer.parseInt(st.nextToken());
+                    max_index.add(size);
                     numberOfColumns = numberOfColumns + size;
                 }
                 line = in.readLine();
-                
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Problem reading file " + fileName);
-            System.out.println("   line = " + line);
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CbhReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CbhReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (in!= null) in.close();

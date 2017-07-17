@@ -21,23 +21,32 @@ import oui.mms.datatypes.OuiCalendar;
  * @author  markstro
  */
 public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
-    private MmsSingleModelRunner srm;
+    private final MmsSingleModelRunner srm;
 
-    /** Creates new form MmsInputDataFromDssGui */
-    public MmsSingleBasinRunGui(String mmsDataFileName, OuiCalendar data_file_start, OuiCalendar data_file_end, MmsSingleModelRunner srm) {
+    /** Creates new form MmsInputDataFromDssGui
+     * @param mmsDataFileName
+     * @param data_file_start
+     * @param data_file_end
+     * @param srm */
+    public MmsSingleBasinRunGui(String mmsDataFileName, OuiCalendar data_file_start,
+            OuiCalendar data_file_end, MmsSingleModelRunner srm) {
         this.srm = srm;
         initComponents();
 
         mmsDataFileLable.setText("MMS Input Data File: " + mmsDataFileName);
         dateLabel.setText("(has data from " + data_file_start.getSQLDate() + " to " + data_file_end.getSQLDate() + ")");
 
+        data_file_end.getMillis();
         queryEnd = (OuiCalendar)(data_file_end.clone());
+        data_file_start.getMillis();
         queryStart = (OuiCalendar)(data_file_start.clone());
 
-        startSpinner.setModel(new SpinnerDateModel(queryStart.getTime(), data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
+        startSpinner.setModel(new SpinnerDateModel(queryStart.getTime(),
+                data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
         startSpinner.setEditor(new JSpinner.DateEditor(startSpinner, "yyyy-MM-dd"));
 
-        endSpinner.setModel(new SpinnerDateModel(queryEnd.getTime(), data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
+        endSpinner.setModel(new SpinnerDateModel(queryEnd.getTime(),
+                data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
         endSpinner.setEditor(new JSpinner.DateEditor(endSpinner, "yyyy-MM-dd"));
 
         this.setSize(this.getPreferredSize());

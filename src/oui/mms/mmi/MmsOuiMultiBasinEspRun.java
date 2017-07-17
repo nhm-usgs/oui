@@ -48,14 +48,14 @@ public class MmsOuiMultiBasinEspRun extends MmsOuiEspRun {
   *  Set up routedEnsembleData
   *  Assuming that each basin is a forecast point
   */
-         ArrayList<EnsembleData> routedEnsembleData = new ArrayList<EnsembleData> (localEnsembleData.size());
+         ArrayList<EnsembleData> routedEnsembleData = new ArrayList<> (localEnsembleData.size());
 
          for (int basinIndex = 0; basinIndex < localEnsembleData.size(); basinIndex++) {
              EnsembleData basinEd = (EnsembleData)(localEnsembleData.get(basinIndex));
              ed = new EnsembleData("xroute_" + basinEd.getName(), null, null, basinEd.getHistoric());
-             ed.setInput(new ArrayList<TimeSeries> (basinEd.getHistoric().size()));
-             ed.setOutput(new ArrayList<TimeSeries> (basinEd.getHistoric().size()));
-             ed.setForecasts(new ArrayList<TimeSeries> (basinEd.getHistoric().size()));
+             ed.setInput(new ArrayList<> (basinEd.getHistoric().size()));
+             ed.setOutput(new ArrayList<> (basinEd.getHistoric().size()));
+             ed.setForecasts(new ArrayList<> (basinEd.getHistoric().size()));
              ed.setInitialization(new TimeSeries ("init", null, null, initStart, initEnd, "init",  null, "unknown"));
              routedEnsembleData.add(basinIndex, ed);
          }
@@ -184,24 +184,24 @@ public class MmsOuiMultiBasinEspRun extends MmsOuiEspRun {
         try {
             EnsembleData ed = null;
             
-            String dataFileBasinName = "RioGrande";
-            String espVariableName = "basin_cfs.strmflow";
-            String espVariableIndex = "1";
-            String espVariableCombo = espVariableName + " " + espVariableIndex;
-            int initLength = 730;
+//            String dataFileBasinName = "RioGrande";
+//            String espVariableName = "basin_cfs.strmflow";
+//            String espVariableIndex = "1";
+//            String espVariableCombo = espVariableName + " " + espVariableIndex;
+//            int initLength = 730;
             String mms_workspace = "/home/projects/oui_projects/rio_grande/riogr_mms_work";
-            String data_file = mms_workspace + "/input/data/" + dataFileBasinName + ".xprms_xyz.data";
-            String espDataDestDir = mms_workspace + "/input/data/esp";
-            String espOutputDestDir = "esp";         //  This has mms_work/output/ prepended to it by MMS
-            String executable = "models/xprms_xyz";
-            String xrouteExecutable = "models/xroute";
-            String envFile = "control/mms.env";
-            String controlFileExt = ".xprms_xyz.oui.control";
-            String xrouteControlFile = "RioGrande.xroute.oui.control";
-            OuiCalendar forecastStart = new OuiCalendar();
+//            String data_file = mms_workspace + "/input/data/" + dataFileBasinName + ".xprms_xyz.data";
+//            String espDataDestDir = mms_workspace + "/input/data/esp";
+//            String espOutputDestDir = "esp";         //  This has mms_work/output/ prepended to it by MMS
+//            String executable = "models/xprms_xyz";
+//            String xrouteExecutable = "models/xroute";
+//            String envFile = "control/mms.env";
+//            String controlFileExt = ".xprms_xyz.oui.control";
+//            String xrouteControlFile = "RioGrande.xroute.oui.control";
+            OuiCalendar forecastStart = OuiCalendar.getInstance();
             forecastStart.setDT("1998-10-01");
 
-            OuiCalendar forecastEnd = new OuiCalendar();
+            OuiCalendar forecastEnd = OuiCalendar.getInstance();
             forecastEnd.setDT("1999-07-30");
             
             String xrouteHeaderDataFile = mms_workspace + "/input/data/" + "RioGrande.xroute.data.header";
@@ -210,28 +210,28 @@ public class MmsOuiMultiBasinEspRun extends MmsOuiEspRun {
                                 "Jemez", "LittleNavajo", "LosPinos", "Navajo", "RedRiver", "RioPuebloDeTaos",
                                 "SanAntonio", "SantaFe", "RGCerro", "RGEmbudo", "RGTaosJunction", "RGOtowi"};
             
-            String xrouteEspVariableName = "inflow.muskingum";
-            String[] xrouteEspVariableIndex = {"52",
-                                               "0",
-                                               "55",
-                                               "42",
-                                               "50",
-                                               "48",
-                                               "63",
-                                               "43",
-                                               "29",
-                                               "0",
-                                               "6",
-                                               "0",
-                                               "1",
-                                               "9",
-                                               "31",
-                                               "16",
-                                               "59",
-                                               "64",
-                                               "62",
-                                               "66"
-            };
+//            String xrouteEspVariableName = "inflow.muskingum";
+//            String[] xrouteEspVariableIndex = {"52",
+//                                               "0",
+//                                               "55",
+//                                               "42",
+//                                               "50",
+//                                               "48",
+//                                               "63",
+//                                               "43",
+//                                               "29",
+//                                               "0",
+//                                               "6",
+//                                               "0",
+//                                               "1",
+//                                               "9",
+//                                               "31",
+//                                               "16",
+//                                               "59",
+//                                               "64",
+//                                               "62",
+//                                               "66"
+//            };
             
 //            { //  Use this block to generate the ESP run and save to XML file
 //                ed = new EnsembleData(dataFileBasinName, null, null, null);
@@ -247,7 +247,7 @@ public class MmsOuiMultiBasinEspRun extends MmsOuiEspRun {
 //                }
 //            }
             
-            ArrayList<EnsembleData> localEnsembleData = new ArrayList<EnsembleData> (basins.length);
+            ArrayList<EnsembleData> localEnsembleData = new ArrayList<> (basins.length);
             
             {  //  Use this block to load ESP run into EnsembleData
                 for (int i = 0; i < basins.length; i++) {
@@ -273,7 +273,7 @@ public class MmsOuiMultiBasinEspRun extends MmsOuiEspRun {
 //                ed.save(xml_file);
 //            }
             
-            ArrayList<EnsembleData> routedEnsembleData = new ArrayList<EnsembleData> (basins.length);
+            ArrayList<EnsembleData> routedEnsembleData = new ArrayList<> (basins.length);
             for (int i = 0; i < basins.length; i++) {
                 String xml_file = mms_workspace + "/output/esp/xroute_" + basins[i] + ".xml";
                 ed = EnsembleData.load(xml_file);

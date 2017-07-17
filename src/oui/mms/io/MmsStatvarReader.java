@@ -1,9 +1,12 @@
 package oui.mms.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
 import oui.mms.datatypes.TimeSeries;
 
@@ -86,7 +89,7 @@ public class MmsStatvarReader {
     private void readDates() {
         BufferedReader in = null;
         String line;
-        OuiCalendar mdt = new OuiCalendar();
+        OuiCalendar mdt = OuiCalendar.getInstance();
 
         try {
             in = new BufferedReader (new FileReader (fileName));
@@ -128,9 +131,9 @@ public class MmsStatvarReader {
                 dates[data_line_count++] =  mdt.getJulian();
             }
             
-            start = new OuiCalendar();
+            start = OuiCalendar.getInstance();
             start.setJulian(dates[0]);
-            end = new OuiCalendar();
+            end = OuiCalendar.getInstance();
             end.setJulian(dates[data_line_count - 1]);
 
         } catch (IOException e) {
@@ -214,11 +217,12 @@ public class MmsStatvarReader {
             in.close();
             in = null;
             
-         } catch (IOException e) {
-//            e.printStackTrace();   
-         } catch (NumberFormatException e) {
-//            e.printStackTrace();             
             
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MmsStatvarReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MmsStatvarReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (in!= null) in.close();

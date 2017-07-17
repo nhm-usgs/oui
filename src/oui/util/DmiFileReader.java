@@ -2,8 +2,12 @@ package oui.util;
 
 import java.util.StringTokenizer;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
 
 import oui.mms.io.MmsDataFileReader;
@@ -23,7 +27,7 @@ public class DmiFileReader {
 
    public OuiCalendar getStart () {
       StringTokenizer st;
-      String line = "foo";
+      String line;
 
       if (start_time != null) {
          return (start_time);
@@ -48,26 +52,26 @@ public class DmiFileReader {
           st.nextToken();  // var name
           st.nextToken();  // site id
           st.nextToken();  // datatype id
-          start_time = new OuiCalendar();
-          int year = Integer.valueOf(st.nextToken()).intValue();
-          int mon = Integer.valueOf(st.nextToken()).intValue();
-          int day = Integer.valueOf(st.nextToken()).intValue();
-          int hour = Integer.valueOf(st.nextToken()).intValue();
-          int min = Integer.valueOf(st.nextToken()).intValue();
-          int sec = Integer.valueOf(st.nextToken()).intValue();
+          start_time = OuiCalendar.getInstance();
+          int year = Integer.parseInt(st.nextToken());
+          int mon = Integer.parseInt(st.nextToken());
+          int day = Integer.parseInt(st.nextToken());
+          int hour = Integer.parseInt(st.nextToken());
+          int min = Integer.parseInt(st.nextToken());
+          int sec = Integer.parseInt(st.nextToken());
           start_time.set(year, mon - 1, day, hour, min, sec);
 
-
-      } catch (Exception ex) {
-         System.out.println ("Problem getting start date from file " +
-                              file_name);
-      }
+      } catch (FileNotFoundException ex) {
+           Logger.getLogger(DmiFileReader.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (IOException ex) {
+           Logger.getLogger(DmiFileReader.class.getName()).log(Level.SEVERE, null, ex);
+       }
       return (start_time);
    }
 
    public OuiCalendar getEnd () {
       StringTokenizer st;
-      String line = "foo", last_line = null;
+      String line, last_line = null;
 
       if (end_time != null) {
          return (end_time);
@@ -93,19 +97,20 @@ System.out.println ("DmiFileReader:: last_line = " + last_line);
          st.nextToken ();  // site id
          st.nextToken ();  // datatype id
 
-         end_time = new OuiCalendar();
-          int year = Integer.valueOf(st.nextToken()).intValue();
-          int mon = Integer.valueOf(st.nextToken()).intValue();
-          int day = Integer.valueOf(st.nextToken()).intValue();
-          int hour = Integer.valueOf(st.nextToken()).intValue();
-          int min = Integer.valueOf(st.nextToken()).intValue();
-          int sec = Integer.valueOf(st.nextToken()).intValue();
+         end_time = OuiCalendar.getInstance();
+          int year = Integer.parseInt(st.nextToken());
+          int mon = Integer.parseInt(st.nextToken());
+          int day = Integer.parseInt(st.nextToken());
+          int hour = Integer.parseInt(st.nextToken());
+          int min = Integer.parseInt(st.nextToken());
+          int sec = Integer.parseInt(st.nextToken());
           end_time.set(year, mon - 1, day, hour, min, sec);
-
-      } catch (Exception ex) {
-         System.out.println ("Problem getting end date from file " +
-                              file_name);
-      }
+          
+      } catch (FileNotFoundException ex) {
+           Logger.getLogger(DmiFileReader.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (IOException ex) {
+           Logger.getLogger(DmiFileReader.class.getName()).log(Level.SEVERE, null, ex);
+       }
       return (end_time);
    }
 
@@ -186,7 +191,7 @@ System.out.println ("DmiFileReader:: last_line = " + last_line);
                st.nextToken ();            // hour
                st.nextToken ();            // minute
                st.nextToken ();            // second
-               data[count++] = Double.valueOf (st.nextToken ()).doubleValue ();
+               data[count++] = Double.valueOf (st.nextToken ());
             }
          }          
          in.close ();

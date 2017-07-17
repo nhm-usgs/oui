@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
 
@@ -15,21 +13,15 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
     double[] variable_min, variable_max, variable_range;
     int zoneCount, timeCount, variableCount;
     OuiCalendar start_time, end_time;
-    OuiCalendar current_time = new OuiCalendar();
+    OuiCalendar current_time;
     int current_time_step;
     double[][][] vals = null;  // indexes are variable, time step, space index
     double[] dates = null;
     int var_index;
 
     public CsvSpaceTimeSeries() {
-        try {
-            start_time = new OuiCalendar();
-            start_time.setDT("1980-10-01");
-            end_time = new OuiCalendar();
-            end_time.setDT("1981-09-30");
-        } catch (SetOuiCalendarException ex) {
-            Logger.getLogger(CsvSpaceTimeSeries.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        start_time = OuiCalendar.getInstance();
+        end_time = OuiCalendar.getInstance();
     }
 
     public CsvSpaceTimeSeries(String csvFileName) {
@@ -48,50 +40,62 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
         return variable_names;
     }
 
+    @Override
     public double getVariableMinValue() {
         return variable_min[var_index];
     }
 
+    @Override
     public double getVariableMaxValue() {
         return variable_max[var_index];
     }
 
+    @Override
     public double getVariableRange() {
         return variable_range[var_index];
     }
 
+    @Override
     public OuiCalendar getStartTime() {
         return start_time;
     }
 
+    @Override
     public OuiCalendar getEndTime() {
         return end_time;
     }
 
+    @Override
     public OuiCalendar getCurrentTime() {
         return current_time;
     }
 
+    @Override
     public int getZoneCount() {
         return zoneCount;
     }
 
+    @Override
     public int getTimeCount() {
         return timeCount;
     }
 
+    @Override
     public int getTimeStep() {
         return current_time_step;
     }
 
+    @Override
     public void setVariableIndex(int vi) {
         this.var_index = vi;
     }
 
+    @Override
     public double[][][] getData() {
         return vals;
     }
 
+    @Override
     public void setTimeStep(int ts) {
         if (ts < 0) {
             ts = 0;
@@ -116,11 +120,11 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
             }
 
             // Figure out the variable names
-            HashSet<String> foo = new HashSet<String>();
+            HashSet<String> foo = new HashSet<>();
             for (int i = 1; i < in.getColumnCount(); i++) {  // Start with 1 because "0" is "timestamp"
                 foo.add(in.getColumnName(i));
             }
-            variable_names = new ArrayList<String>(foo);
+            variable_names = new ArrayList<>(foo);
             variableCount = variable_names.size();
 
             variable_min = new double[variableCount];
@@ -132,7 +136,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
                 variable_max[i] = -10000000.0;
             }
 
-            start_time = new OuiCalendar();
+            start_time = OuiCalendar.getInstance();
             // first time stamp is in first column, fourth row. The first line
             // doesn't count because it is the header.
             String date = (String) in.getValueAt(2, 0); 
@@ -156,7 +160,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
                 }
             }
             
-            end_time = new OuiCalendar();
+            end_time = OuiCalendar.getInstance();
             date = (String) in.getValueAt(in.getRowCount() - 1, 0); // last time stamp is in first column, last row.
             end_time.setDashDate(date);
             
@@ -167,8 +171,8 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
                 variable_range[i] = variable_range[i] + (variable_range[i] * 0.01);
             }
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException | NumberFormatException | SetOuiCalendarException ex) {
+
         }
     }
 
@@ -183,6 +187,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
         return true;
     }
 
+    @Override
     public double[] getCurrentData() {
         if (vals == null) {
             System.out.println("getCurrentData vals = null");
@@ -191,7 +196,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
     }
 
     private void readData() {
-        OuiCalendar mdt = new OuiCalendar();
+        OuiCalendar mdt = OuiCalendar.getInstance();
 
         vals = new double[variableCount][timeCount][zoneCount];
         dates = new double[timeCount];
@@ -222,18 +227,16 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
 
         } catch (FileNotFoundException e) {
             System.out.println("GIS data file " + csvFileName + " not found.");
-            e.printStackTrace();
 
         } catch (IOException e) {
             System.out.println("GIS data file " + csvFileName + " IO exception.");
-            e.printStackTrace();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException | SetOuiCalendarException e) {
 
         }
     }
 
+    @Override
     public void write(String fileName, double[] dates, double[][][] data,
             int timeCount, int variableCount, int zoneCount,
             ArrayList<String> variableNames) {
@@ -245,6 +248,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
      *
      * @return Value of property dates.
      */
+    @Override
     public double[] getDates() {
         return this.dates;
     }
@@ -254,10 +258,12 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
      *
      * @param dates New value of property dates.
      */
+    @Override
     public void setDates(double[] dates) {
         this.dates = dates;
     }
 
+    @Override
     public int getVariableIndex(String string) {
         int indexOf = variable_names.indexOf(string);
         if (indexOf < 0) {
@@ -266,6 +272,7 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
         return indexOf;
     }
 
+    @Override
     public String getVariableNameAt(int col) {
         String get = variable_names.get(col);
         if (get == null) {
@@ -274,10 +281,12 @@ public class CsvSpaceTimeSeries implements SpaceTimeSeriesInterface {
         return get;
     }
 
+    @Override
     public TimeSeries getTimeSeries(String varName, int spaceIndex) {
         return getTimeSeries(getVariableIndex(varName), spaceIndex);
     }
 
+    @Override
     public TimeSeries getTimeSeries(int variableIndex, int spaceIndex) {
         double[] dataSlice = new double[dates.length];
         for (int ts = 0; ts < dates.length; ts++) {

@@ -25,11 +25,12 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
     private MmsEspRunSimpleGui gui = null;
     private String dataFilePath = null;
     private String mmi = null;
-    private String start_time = null;
-    private String end_time = null;
+    private final String start_time = null;
+    private final String end_time = null;
     private OuiCalendar data_file_start;
     
-    /** Creates a new instance of SingleRunMmi */
+    /** Creates a new instance of SingleRunMmi
+     * @param xml_node */
     public MmsOuiEspRunTreeNode(Node xml_node) {
         super(xml_node);
         mmi = MmsProjectXml.getElementContent(xml_node, "@mmi", "none");
@@ -53,6 +54,7 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
         }
     }
 
+    @Override
     public void runModel(OuiCalendar forecastStart, OuiCalendar forecastEnd) {
         MmsProjectXml pxml = MmsProjectXml.getMmsProjectXml();
         String envFile = pxml.getMmiFile(mmi, "@env");
@@ -108,9 +110,9 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
     }
     
     public static void writeEspDataFiles(EnsembleData ed, int initLength, String inputDataFile, String destDir, OuiCalendar forecastStart, OuiCalendar forecastEnd) {
-        ArrayList<TimeSeries> forecasts = new ArrayList<TimeSeries> ();
-        ArrayList<TimeSeries> historic = new ArrayList<TimeSeries> ();
-        ArrayList<TimeSeries> input = new ArrayList<TimeSeries> ();
+        ArrayList<TimeSeries> forecasts = new ArrayList<> ();
+        ArrayList<TimeSeries> historic = new ArrayList<> ();
+        ArrayList<TimeSeries> input = new ArrayList<> ();
         
         MmsDataFileReader dataFileReader = new MmsDataFileReader(inputDataFile);
         OuiCalendar data_file_start = dataFileReader.getStart();
@@ -126,10 +128,10 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
  *  The init_start date is two years before the forecast start date.
  *  The init_end data is one day before the forecast start date.
  */        
-        OuiCalendar init_start = new OuiCalendar();
+        OuiCalendar init_start = OuiCalendar.getInstance();
         init_start.setJulian(forecastStart.getJulian() - initLength);
 
-        OuiCalendar init_end = new OuiCalendar();
+        OuiCalendar init_end = OuiCalendar.getInstance();
         init_end.setJulian(forecastStart.getJulian() - 1.0);
 
         ed.setInitialization(new TimeSeries ("init", null, null, init_start, init_end, "init", dataFileReader.getFileName(), "unknown"));
@@ -144,9 +146,12 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
  *  new_data_start is the start date that will be associated with the new data file
  *  new_data_end is the end date that will be associated with the new data file
  */
+        init_start.getMillis();
         OuiCalendar new_data_start = (OuiCalendar)(init_start.clone());
+        forecastEnd.getMillis();
         OuiCalendar new_data_end = (OuiCalendar)(forecastEnd.clone());
-        int new_data_length = (int)(new_data_end.getJulian() - new_data_start.getJulian() + 1.0);
+        int new_data_length = (int)(new_data_end.getJulian()
+                - new_data_start.getJulian() + 1.0);
 
         double[][] new_data = new double[num_of_columns][new_data_length];
 
@@ -155,7 +160,7 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
  */
         for (int col = 0; col < num_of_columns; col++) {
             for (int i = 0; i < initLength; i++) {
-                double data = all_data[col][i + init_offset];
+//                double data = all_data[col][i + init_offset];
                 new_data[col][i] = all_data[col][i + init_offset];
             }
         }
@@ -166,16 +171,16 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
  */
         int forecast_length = (int)(forecastEnd.getJulian()) - (int)(forecastStart.getJulian()) + 1;
         
-        OuiCalendar historic_start = new OuiCalendar();
+        OuiCalendar historic_start = OuiCalendar.getInstance();
         historic_start.set(data_file_start.getYear(), forecastStart.getMonth(), forecastStart.getDay());
 
-        OuiCalendar historic_end = new OuiCalendar();
+        OuiCalendar historic_end = OuiCalendar.getInstance();
         historic_end.setJulian(historic_start.getJulian() + forecast_length);
 
         while (historic_start.before(data_file_start)) {
             historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
         }
-        historic_end = new OuiCalendar();
+        historic_end = OuiCalendar.getInstance();
         historic_end.setJulian(historic_start.getJulian() + forecast_length);
 
 /*
@@ -200,15 +205,31 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
                         
             String espYear = "" + historic_start.getYear();
             
-            input.add(new TimeSeries(espYear, null, null, (OuiCalendar)(new_data_start.clone()), (OuiCalendar)(new_data_end.clone()), "input", file_name, "unknown"));
-            historic.add (new TimeSeries(espYear, null, null, (OuiCalendar)(historic_start.clone()), (OuiCalendar)(historic_end.clone()), "historic", dataFileReader.getFileName(), "unknown"));
-            forecasts.add (new TimeSeries(espYear, null, null, forecastStart, forecastEnd, "forecast", null, "unknown"));
+            new_data_start.getMillis();
+            new_data_end.getMillis();
+            input.add(new TimeSeries(espYear, null, null,
+                    (OuiCalendar)(new_data_start.clone()),
+                    (OuiCalendar)(new_data_end.clone()), "input", file_name, "unknown"));
+            historic_start.getMillis();
+            historic_end.getMillis();
+            historic.add (new TimeSeries(espYear, null, null,
+                    (OuiCalendar)(historic_start.clone()),
+                    (OuiCalendar)(historic_end.clone()), "historic",
+                    dataFileReader.getFileName(), "unknown"));
+            forecastStart.getMillis();
+            forecastEnd.getMillis();
+            forecasts.add (new TimeSeries(espYear, null, null, forecastStart,
+                    forecastEnd, "forecast", null, "unknown"));
 /*
  *  Step to the next trace
  */            
-            historic_start.set(historic_start.getYear() + 1, historic_start.getMonth() - 1, historic_start.getDay());
-            historic_end = new OuiCalendar();
+            historic_start.set(historic_start.getYear() + 1,
+                    historic_start.getMonth() - 1, historic_start.getDay());
+            historic_start.getMillis();
+                    
+            historic_end = OuiCalendar.getInstance();
             historic_end.setJulian(historic_start.getJulian() + forecast_length);
+            historic_end.getMillis();
         }
         ed.setForecasts(forecasts);
         ed.setHistoric(historic);
@@ -218,7 +239,7 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
     public static void runEsp (EnsembleData ed, String workspace, String model, String envFile, String contFileExt, String outputDir) {
         ArrayList inputFiles = ed.getInput();
         ArrayList historic = ed.getHistoric();
-        ArrayList<TimeSeries> outputFiles = new ArrayList<TimeSeries> (inputFiles.size());
+        ArrayList<TimeSeries> outputFiles = new ArrayList<> (inputFiles.size());
         
         for (int i = 0; i < inputFiles.size(); i++) {
             TimeSeries inputTimeSeries = (TimeSeries)(inputFiles.get(i));

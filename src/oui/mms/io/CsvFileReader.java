@@ -1,14 +1,18 @@
 package oui.mms.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
+import oui.mms.datatypes.SetOuiCalendarException;
 import oui.mms.datatypes.TimeSeries;
 
 public class CsvFileReader {
-    private String fileName;
+    private final String fileName;
     private double[] dates = null;
     private int variableCount = -1;
     OuiCalendar start = null;
@@ -78,14 +82,16 @@ public class CsvFileReader {
     private void readDates() {
         BufferedReader in = null;
         String line;
-        OuiCalendar mdt = new OuiCalendar();
+        OuiCalendar mdt = OuiCalendar.getInstance();
 
         try {
             in = new BufferedReader (new FileReader (fileName));
             in.readLine();
             
             int data_line_count = 0;
-            while ((line = in.readLine()) != null) data_line_count++;
+            while ((line = in.readLine()) != null) {
+                data_line_count++;
+            }
 
             dates  = new double[data_line_count];
             in.close ();
@@ -100,17 +106,20 @@ public class CsvFileReader {
                 dates[data_line_count++] =  mdt.getJulian();
             }
             
-            start = new OuiCalendar ();
+            start = OuiCalendar.getInstance();
             start.setJulian(dates[0]);
-            end = new OuiCalendar ();
+            end = OuiCalendar.getInstance();
             end.setJulian(dates[data_line_count - 1]);
-            
-         } catch (Exception e) {
-//            e.printStackTrace();
-             start = null;
-             end = null;
-            
+ 
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SetOuiCalendarException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            start = null;
+            end = null;
             try {
                 if (in!= null) in.close();
             }  catch (IOException E) {}   
@@ -127,8 +136,7 @@ public class CsvFileReader {
             variableIndexes = new int[variableCount];
             for (int i = 0; i < variableCount; i++) variableIndexes[i] = 1;
             
-        } catch (Exception e) {
-//            e.printStackTrace();
+        } catch (IOException e) {
             variableNames = null;
             variableIndexes = null;
             
@@ -143,7 +151,7 @@ public class CsvFileReader {
         String foo = name.replace('[', ' ').replace(']', ' ');
         StringTokenizer st = new StringTokenizer(foo, " ");
         String var_name = st.nextToken();
-        int index = Integer.valueOf (st.nextToken ()).intValue ();
+        int index = Integer.parseInt (st.nextToken ());
         
         return getValues (var_name, index);
     }
@@ -163,10 +171,11 @@ public class CsvFileReader {
             }
             in.close();
             in = null;
-            
-        } catch (Exception e) {
-//            e.printStackTrace();
-            
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (in!= null) in.close();
@@ -204,15 +213,16 @@ public class CsvFileReader {
                 j++;
                 
                 String[] val_str = line.split(",");
-                values[k++] =  Double.valueOf(val_str[match_index]).doubleValue();
+                values[k++] =  Double.valueOf(val_str[match_index]);
             }
             System.out.println(" done");
-            
-         } catch (Exception e) {
-//            e.printStackTrace();
-             values = null;
-            
+             
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            values = null;
             try {
                 if (in!= null) in.close();
             }  catch (IOException E) {}   

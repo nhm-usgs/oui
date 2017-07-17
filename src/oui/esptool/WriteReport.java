@@ -22,10 +22,10 @@ public class WriteReport {
 //        Format f2 = new Format("%3i");
 //        Format f3 = new Format("%8.1f");
 //        Format f4 = new Format("%4.1f");
-        int vol_rank, peak_rank;
+//        int vol_rank, peak_rank;
         EnsembleData ed = top.getEnsembleData();
         ArrayList stats = ed.getStats();
-        OuiCalendar mdt = new OuiCalendar();
+        OuiCalendar mdt = OuiCalendar.getInstance();
         ReportPanel reportPanel = new ReportPanel();
         WindowFactory.displayInFrame(reportPanel, "ESP Report");
         Writer out = reportPanel.getWriter();
@@ -127,7 +127,7 @@ public class WriteReport {
 //        Format f2 = new Format("%3i");
 //        Format f3 = new Format("%8.1f");
 //        Format f4 = new Format("%4.1f");
-        OuiCalendar mdt = new OuiCalendar();
+        OuiCalendar mdt =  OuiCalendar.getInstance();
         
         File reportFile = new File(xmlFile.getParentFile(), xmlFile.getName().replace(".xml", ".rpt"));
         EnsembleData ed = EnsembleData.load(xmlFile.getAbsolutePath());

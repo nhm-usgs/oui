@@ -28,7 +28,10 @@ public class TimeSeriesPlotter extends Plotter {
     ChartPanel chartPanel = null;
     private boolean isLog = false;
     
-    public ChartPanel getPanel () {return chartPanel;}
+    @Override
+    public ChartPanel getPanel () {
+        return chartPanel;
+    }
     
     public TimeSeriesPlotter(String title, String xAxisLabel, String yAxisLabel, boolean isLog) {
         this.isLog = isLog;
@@ -60,7 +63,10 @@ public class TimeSeriesPlotter extends Plotter {
         return chart;        
     }
     
-    public void clearAll () {dataset.removeAllSeries();}
+    @Override
+    public void clearAll () {
+        dataset.removeAllSeries();
+    }
     
     public void clearTrace(String traceLabel) {
         org.jfree.data.time.TimeSeries series = dataset.getSeries(traceLabel);
@@ -73,7 +79,7 @@ public class TimeSeriesPlotter extends Plotter {
         double[] vals = tsc.getVals();
         double[] dates = tsc.getDates();
         
-        OuiCalendar mdt = new OuiCalendar ();
+        OuiCalendar mdt = OuiCalendar.getInstance();
         for (int i = 0; i < vals.length; i++) {
             mdt.setJulian(dates[i]);
             if (isLog) {

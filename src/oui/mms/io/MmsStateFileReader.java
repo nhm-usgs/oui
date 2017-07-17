@@ -1,14 +1,17 @@
 package oui.mms.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
 
 
 public class MmsStateFileReader {
-    private String fileName;
+    private final String fileName;
     OuiCalendar stateDate = null;
     
     public MmsStateFileReader(String fn) {
@@ -28,7 +31,9 @@ public class MmsStateFileReader {
         BufferedReader in = null;
         String line;
         
-        if (this.stateDate == null) this.stateDate = new OuiCalendar();
+        if (this.stateDate == null) {
+            this.stateDate = OuiCalendar.getInstance();
+        }
         
         try {
             in = new BufferedReader(new FileReader(fileName));
@@ -42,13 +47,16 @@ public class MmsStateFileReader {
             st.nextToken();
             st.nextToken();
             
-            double jul_date = Double.valueOf(st.nextToken()).doubleValue();
+            double jul_date = Double.parseDouble(st.nextToken());
             
             this.stateDate.setJulian(jul_date);
             
-        } catch (Exception e) {
-            e.printStackTrace();
+
             
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MmsStateFileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MmsStateFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (in!= null) in.close();
@@ -56,5 +64,3 @@ public class MmsStateFileReader {
         }
     }
 }
-
-

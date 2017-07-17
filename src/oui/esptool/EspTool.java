@@ -30,17 +30,28 @@ import oui.util.TimeSeriesPlotter;
  * @author markstro
  */
 public class EspTool extends JPanel implements MenuBarProvider {
-
     private TimeSeriesPlotter plotter;
-    private DefaultListModel listModel = new DefaultListModel();
+    private final DefaultListModel listModel;
     private String espStationName = null;
-
     protected PersistentSplitterTracker persistentSplitterTracker = null;
+    private OuiCalendar analysisStart;
+    private OuiCalendar analysisEnd;
+    private OuiCalendar dmiStart;
+    private OuiCalendar dmiEnd;
+    private EnsembleData ensembleData;
+    private String espDmiClassName;
+
+    /**
+     * Holds value of property espDmiNode.
+     */
+    private Node espDmiNode;
 
     /**
      * Creates new form EspTool
+     * @param xmlFile
+     * @param variableName
      */
-    public EspTool(String xmlFile, String variableName) {  //  Constructor for xml file version
+    public EspTool(String xmlFile, String variableName) {
         this(EnsembleData.load(xmlFile));
     }
 
@@ -56,13 +67,18 @@ public class EspTool extends JPanel implements MenuBarProvider {
         this(ed, null);
     }
 
+    // Here's the real constructor
     public EspTool(EnsembleData ed, String espStationName) {
+        this.listModel = new DefaultListModel();
         this.espStationName = espStationName;
         this.ensembleData = ed;
+        this.analysisStart = OuiCalendar.getInstance();
+        this.analysisEnd = OuiCalendar.getInstance();
+        this.dmiStart = OuiCalendar.getInstance();
+        this.dmiEnd = OuiCalendar.getInstance();
 
         initComponents();
         traceListList.setModel(listModel);
-
 
         /*
          * Add the plotter
@@ -78,13 +94,12 @@ public class EspTool extends JPanel implements MenuBarProvider {
          *  Forecast period id the default analysis period.
          */
         ArrayList forecasts = ed.getForecasts();
-        TimeSeries forecastTS = (TimeSeries) (forecasts.get(0));
+        TimeSeries forecastTS = (TimeSeries)(forecasts.get(0));
 
-        analysisStart = (OuiCalendar) forecastTS.getStart().clone();
-        analysisEnd = (OuiCalendar) forecastTS.getEnd().clone();
-
-        dmiStart = (OuiCalendar) analysisStart.clone();
-        dmiEnd = (OuiCalendar) analysisEnd.clone();
+        analysisStart = OuiCalendar.getClone(forecastTS.getStart());
+        analysisEnd = OuiCalendar.getClone(forecastTS.getEnd());
+        dmiStart = OuiCalendar.getClone(analysisStart);
+        dmiEnd = OuiCalendar.getClone(analysisEnd);
 
         setDefaultDates();
         ed.setAnalysisPeriod(analysisStart, analysisEnd);
@@ -95,15 +110,15 @@ public class EspTool extends JPanel implements MenuBarProvider {
         persistentSplitterTracker = new PersistentSplitterTracker(this, jSplitPane1);
     }
 
+    @Override
     public JMenuBar getMenuBar() {
         return jMenuBar1;
     }
 
     private void loadList() {
         ArrayList order;
-
         listModel.clear();
-
+        
         if (ensembleData.getSortOrder() == EnsembleData.VOLUME) {
             order = ensembleData.getStatsInVolumeOrder();
         } else if (ensembleData.getSortOrder() == EnsembleData.PEAK) {
@@ -123,8 +138,12 @@ public class EspTool extends JPanel implements MenuBarProvider {
     }
 
     public final void plotData(TimeSeries[] tscs) {
-        for (int i = 0; i < tscs.length; i++) {
-            plotData(tscs[i]);
+        if (tscs != null) {
+            for (TimeSeries tsc : tscs) {
+                if (tsc != null) {
+                    plotData(tsc);
+                }
+            }
         }
     }
 
@@ -139,24 +158,31 @@ public class EspTool extends JPanel implements MenuBarProvider {
         ensembleStartLabel.setText(forecastStart.getJDBCDate().toString());
         ensembleEndLabel.setText(forecastEnd.getJDBCDate().toString());
 
-        analysisStartSpinner.setModel(new SpinnerDateModel(analysisStart.getTime(), initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
-        analysisStartSpinner.setEditor(new JSpinner.DateEditor(analysisStartSpinner, "yyyy-MM-dd"));
+        analysisStartSpinner.setModel(new SpinnerDateModel(analysisStart.getTime(),
+                initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
+        analysisStartSpinner.setEditor(new JSpinner.DateEditor(analysisStartSpinner,
+                "yyyy-MM-dd"));
 
-        analysisEndSpinner.setModel(new SpinnerDateModel(analysisEnd.getTime(), initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
-        analysisEndSpinner.setEditor(new JSpinner.DateEditor(analysisEndSpinner, "yyyy-MM-dd"));
+        analysisEndSpinner.setModel(new SpinnerDateModel(analysisEnd.getTime(),
+                initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
+        analysisEndSpinner.setEditor(new JSpinner.DateEditor(analysisEndSpinner,
+                "yyyy-MM-dd"));
 
-        dmiStartSpinner.setModel(new SpinnerDateModel(forecastStart.getTime(), initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
-        dmiStartSpinner.setEditor(new JSpinner.DateEditor(dmiStartSpinner, "yyyy-MM-dd"));
+        dmiStartSpinner.setModel(new SpinnerDateModel(forecastStart.getTime(),
+                initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
+        dmiStartSpinner.setEditor(new JSpinner.DateEditor(dmiStartSpinner,
+                "yyyy-MM-dd"));
 
-        dmiEndSpinner.setModel(new SpinnerDateModel(forecastEnd.getTime(), initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
-        dmiEndSpinner.setEditor(new JSpinner.DateEditor(dmiEndSpinner, "yyyy-MM-dd"));
+        dmiEndSpinner.setModel(new SpinnerDateModel(forecastEnd.getTime(),
+                initStart.getTime(), forecastEnd.getTime(), Calendar.DAY_OF_MONTH));
+        dmiEndSpinner.setEditor(new JSpinner.DateEditor(dmiEndSpinner,
+                "yyyy-MM-dd"));
     }
 
     public void selectListItems(int enso_code) {
-
         int count = 0;
         for (int j = 0; j < listModel.getSize(); j++) {
-            EnsembleListLabel label = (EnsembleListLabel) (listModel.getElementAt(j));
+            EnsembleListLabel label = (EnsembleListLabel)(listModel.getElementAt(j));
             if (ElNino.lookUp(enso_code, label)) {
                 count++;
             }
@@ -165,7 +191,7 @@ public class EspTool extends JPanel implements MenuBarProvider {
         int[] sel = new int[count];
         count = 0;
         for (int j = 0; j < listModel.getSize(); j++) {
-            EnsembleListLabel label = (EnsembleListLabel) (listModel.getElementAt(j));
+            EnsembleListLabel label = (EnsembleListLabel)(listModel.getElementAt(j));
             if (ElNino.lookUp(enso_code, label)) {
                 sel[count++] = j;
             }
@@ -512,14 +538,14 @@ public class EspTool extends JPanel implements MenuBarProvider {
              */
             Iterator it = ensembleData.getStats().iterator();
             while (it.hasNext()) {
-                EnsembleListLabel ell = (EnsembleListLabel) (it.next());
+                EnsembleListLabel ell = (EnsembleListLabel)(it.next());
                 plotter.clearTrace(ell.getTraceName());
             }
 
             if (traceListList.getSelectedIndex() != -1) {
                 Object[] sel = traceListList.getSelectedValues();
-                for (int i = 0; i < sel.length; i++) {
-                    EnsembleListLabel ell = (EnsembleListLabel) (sel[i]);
+                for (Object sel1 : sel) {
+                    EnsembleListLabel ell = (EnsembleListLabel)(sel1);
                     plotData(ell.getForecast());
                 }
             }
@@ -545,8 +571,9 @@ public class EspTool extends JPanel implements MenuBarProvider {
 
         if (espDmiClassName == null) {
             System.out.println("EspTool:  no esp dmi specified -- not run.");
-            JOptionPane.showMessageDialog(GuiUtilities.windowFor(this), "No esp dmi specified -- not run.", "EspTool DMI", JOptionPane.INFORMATION_MESSAGE);
-
+            JOptionPane.showMessageDialog(GuiUtilities.windowFor(this),
+                    "No esp dmi specified -- not run.", "EspTool DMI",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -557,7 +584,7 @@ public class EspTool extends JPanel implements MenuBarProvider {
             String[] probs = new String[sel.length];
 
             for (int i = 0; i < sel.length; i++) {
-                EnsembleListLabel ell = (EnsembleListLabel) (sel[i]);
+                EnsembleListLabel ell = (EnsembleListLabel)(sel[i]);
                 years[i] = "" + ell.getTraceYear();
 
                 probs[i] = "-1";
@@ -578,7 +605,7 @@ public class EspTool extends JPanel implements MenuBarProvider {
             Constructor constructor = cl.getConstructor(signature);
             Object[] args = {espDmiNode};
 
-            EspOutputDmi output_dmi = (EspOutputDmi) (constructor.newInstance(args));
+            EspOutputDmi output_dmi = (EspOutputDmi)(constructor.newInstance(args));
             output_dmi.runDmi(dmiStart, dmiEnd, years, probs, espStationName);
 
         } catch (java.lang.reflect.InvocationTargetException e) {
@@ -676,11 +703,9 @@ public class EspTool extends JPanel implements MenuBarProvider {
             }
 
         } catch (Exception ex) {
-//            ex.printStackTrace();
             System.out.println();
             usage();
             System.out.println();
-
         }
     }
 
@@ -892,39 +917,4 @@ public class EspTool extends JPanel implements MenuBarProvider {
     private javax.swing.JList traceListList;
     private javax.swing.JPanel tracePanel;
     // End of variables declaration//GEN-END:variables
-    /**
-     * Holds value of property analysisStart.
-     */
-    private OuiCalendar analysisStart = new OuiCalendar();
-
-    /**
-     * Holds value of property analysisEnd.
-     */
-    private OuiCalendar analysisEnd = new OuiCalendar();
-
-    /**
-     * Holds value of property dmiStart.
-     */
-    private OuiCalendar dmiStart = new OuiCalendar();
-
-    /**
-     * Holds value of property dmiEnd.
-     */
-    private OuiCalendar dmiEnd = new OuiCalendar();
-
-    /**
-     * Holds value of property ensembleData.
-     */
-    private EnsembleData ensembleData;
-
-    /**
-     * Holds value of property espDmiClassName.
-     */
-    private String espDmiClassName;
-
-    /**
-     * Holds value of property espDmiNode.
-     */
-    private Node espDmiNode;
-
 }

@@ -62,11 +62,11 @@ public class ReportOPStats {
         int result = JOptionPane.showOptionDialog(GuiUtilities.windowFor(tst), message, "Stat Report Info", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         
         if(result == 0) {
-            ibyr = Integer.valueOf(start_year.getText()).intValue();
-            ieyr = Integer.valueOf(end_year.getText()).intValue();
-            mfs = Integer.valueOf(start_month.getText()).intValue();
-            mfn = Integer.valueOf(end_month.getText()).intValue();
-            da = Integer.valueOf(area.getText()).intValue();
+            ibyr = Integer.parseInt(start_year.getText());
+            ieyr = Integer.parseInt(end_year.getText());
+            mfs = Integer.parseInt(start_month.getText());
+            mfn = Integer.parseInt(end_month.getText());
+            da = Integer.parseInt(area.getText());
             
         } else {
             return;
@@ -95,7 +95,7 @@ public class ReportOPStats {
         
         String units = "e";     // english or metric units (e or m)
         
-        Object[] selected = tst.getTraceListList().getSelectedValues();
+//        Object[] selected = tst.getTraceListList().getSelectedValues();
         
         //        for (int i = 0; i < 2; i++) {
         try {
@@ -113,7 +113,7 @@ public class ReportOPStats {
             }
             
             
-            OuiCalendar end_report_date = new OuiCalendar();
+            OuiCalendar end_report_date = OuiCalendar.getInstance();
             end_report_date.set(ieyr,(mfn + 1),1);
             end_report_date.setJulian(end_report_date.getJulian() - 1.0);
             
@@ -124,41 +124,41 @@ public class ReportOPStats {
                 start_year = ibyr;
             }
             
-            OuiCalendar period_start = new OuiCalendar();
+            OuiCalendar period_start = OuiCalendar.getInstance();
             period_start.set(start_year, mfs, 1);
             
             OuiCalendar period_end;
             if (mfs > mfn) {
-                period_end = new OuiCalendar();
+                period_end = OuiCalendar.getInstance();
                 period_end.set((start_year + 1), (mfn + 1), 1);
             } else {
-                period_end = new OuiCalendar();
+                period_end = OuiCalendar.getInstance();
                 period_end.set(start_year, (mfn + 1), 1);
             }
             period_end.setJulian(period_end.getJulian() - 1.0);
             
-            ArrayList<String> wy_labels = new ArrayList<String>(10);
-            ArrayList<Double> obs_mean = new ArrayList<Double>(10);
-            ArrayList<Double> pred_mean = new ArrayList<Double>(10);
-            ArrayList<Double> obs_sd = new ArrayList<Double>(10);
-            ArrayList<Double> pred_sd = new ArrayList<Double>(10);
-            ArrayList<Double> obs_total = new ArrayList<Double>(10);
-            ArrayList<Double> pred_total = new ArrayList<Double>(10);
-            ArrayList<Double> obs_max = new ArrayList<Double>(10);
-            ArrayList<Double> pred_max = new ArrayList<Double>(10);
-            ArrayList<String> obs_date = new ArrayList<String>(10);
-            ArrayList<String> pred_date = new ArrayList<String>(10);
-            ArrayList<Double> standard_err = new ArrayList<Double>(10);
-            ArrayList<Double> cv = new ArrayList<Double>(10);
-            ArrayList<Double> ntd = new ArrayList<Double>(10);
-            ArrayList<Double> r = new ArrayList<Double>(10);
+            ArrayList<String> wy_labels = new ArrayList<>(10);
+            ArrayList<Double> obs_mean = new ArrayList<>(10);
+            ArrayList<Double> pred_mean = new ArrayList<>(10);
+            ArrayList<Double> obs_sd = new ArrayList<>(10);
+            ArrayList<Double> pred_sd = new ArrayList<>(10);
+            ArrayList<Double> obs_total = new ArrayList<>(10);
+            ArrayList<Double> pred_total = new ArrayList<>(10);
+            ArrayList<Double> obs_max = new ArrayList<>(10);
+            ArrayList<Double> pred_max = new ArrayList<>(10);
+            ArrayList<String> obs_date = new ArrayList<>(10);
+            ArrayList<String> pred_date = new ArrayList<>(10);
+            ArrayList<Double> standard_err = new ArrayList<>(10);
+            ArrayList<Double> cv = new ArrayList<>(10);
+            ArrayList<Double> ntd = new ArrayList<>(10);
+            ArrayList<Double> r = new ArrayList<>(10);
             double ototal = 0.0;
             double ptotal = 0.0;
             double var_ototal = 0.0;
             double var_ptotal = 0.0;
             double ss_errtotal = 0.0;
-            double total_obs_total = 0.0;
-            double total_pred_total = 0.0;
+//            double total_obs_total = 0.0;
+//            double total_pred_total = 0.0;
             int tot_day_count = 0;
             
             while (period_end.getJulian() <= end_report_date.getJulian()) {
@@ -171,7 +171,7 @@ public class ReportOPStats {
                     wy_labels.add("" + start_year);
                 }
                 
-                double julian_start = period_start.getJulian();
+//                double julian_start = period_start.getJulian();
                 
 //                int start_index;
                 
@@ -210,8 +210,8 @@ public class ReportOPStats {
 //                    }
                 }
                 
-                obs_max.add(new Double(max_obs));
-                pred_max.add(new Double(max_pred));
+                obs_max.add(max_obs);
+                pred_max.add(max_pred);
                 obs_date.add(odate);
                 pred_date.add(pdate);
                 
@@ -221,11 +221,11 @@ public class ReportOPStats {
                 double om = sum_obs / (double)day_count;
                 double pm = sum_pred / (double)day_count;
                 
-                obs_mean.add(new Double(om));
-                pred_mean.add(new Double(pm));
+                obs_mean.add(om);
+                pred_mean.add(pm);
                 
-                obs_total.add(new Double(sum_obs * 23.8017 / da));
-                pred_total.add(new Double(sum_pred * 23.8017 / da));
+                obs_total.add(sum_obs * 23.8017 / da);
+                pred_total.add(sum_pred * 23.8017 / da);
                 
                 double var_obs = 0.0;
                 double var_pred = 0.0;
@@ -248,24 +248,24 @@ public class ReportOPStats {
                 double var_obs1 = var_obs / (day_count - 1);
                 double var_pred1 = var_pred / (day_count - 1);
                 double ss_err1 = ss_err / (day_count - 1);
-                obs_sd.add(new Double(Math.sqrt(var_obs1)));
-                pred_sd.add(new Double(Math.sqrt(var_pred1)));
+                obs_sd.add(Math.sqrt(var_obs1));
+                pred_sd.add(Math.sqrt(var_pred1));
                 ss_err1 = Math.sqrt(ss_err1);
-                standard_err.add(new Double(ss_err1));
-                cv.add(new Double(ss_err1 / om));
+                standard_err.add(ss_err1);
+                cv.add(ss_err1 / om);
                 double ntd_1 = 1.0 - (ss_err / var_obs);
-                ntd.add(new Double(ntd_1));
+                ntd.add(ntd_1);
                 double r1 = yc1 / Math.sqrt(var_pred * var_obs);
-                r.add(new Double(r1));
+                r.add(r1);
                 
                 start_year++;
-                period_start = new OuiCalendar();
+                period_start = OuiCalendar.getInstance();
                 period_start.set(start_year, mfs, 1);
                 if (mfs > mfn) {
-                    period_end = new OuiCalendar();
+                    period_end = OuiCalendar.getInstance();
                     period_end.set((start_year + 1), (mfn + 1), 1);
                 } else {
-                    period_end = new OuiCalendar();
+                    period_end = OuiCalendar.getInstance();
                     period_end.set(start_year, (mfn + 1), 1);
                 }
                 period_end.setJulian(period_end.getJulian() - 1.0);
@@ -299,8 +299,8 @@ public class ReportOPStats {
 //                + df9_2.form(pe));
 //            }
             
-            var_ototal = var_ototal / (tot_day_count - 1);
-            var_ptotal = var_ptotal / (tot_day_count - 1);
+//            var_ototal = var_ototal / (tot_day_count - 1);
+//            var_ptotal = var_ptotal / (tot_day_count - 1);
             
             double ot = ototal * 23.8017 / da;
             double pt = ptotal * 23.8017 / da;
@@ -325,16 +325,16 @@ public class ReportOPStats {
 //            out.println(" water                                     standard");
 //            out.println(" year   flow     date     flow     date      error    cv     ntd     r");
 //            out.println();
-            
-            for (int j = 0; j < wy_labels.size(); j++) {
-                double om2 = obs_max.get(j).doubleValue();
-                double pm2 = pred_max.get(j).doubleValue();
-                String od = obs_date.get(j);
-                String pd = pred_date.get(j);
-                double se = standard_err.get(j).doubleValue();
-                double c_v = cv.get(j).doubleValue();
-                double n_d_t = ntd.get(j).doubleValue();
-                double r1 = r.get(j).doubleValue();
+
+            for (String wy_label : wy_labels) {
+//                double om2 = obs_max.get(j);
+//                double pm2 = pred_max.get(j);
+//                String od = obs_date.get(j);
+//                String pd = pred_date.get(j);
+//                double se = standard_err.get(j);
+//                double c_v = cv.get(j);
+//                double n_d_t = ntd.get(j);
+//                double r1 = r.get(j);
 //                out.println(" " + wy_labels.elementAt(j)
 //                + df8_1.form(om2)
 //                + "   " + od + " "

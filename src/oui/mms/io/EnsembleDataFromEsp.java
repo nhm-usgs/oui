@@ -27,7 +27,7 @@ public class EnsembleDataFromEsp extends EnsembleData {
             MmsStatvarReader rsvd = new MmsStatvarReader(initStatvarFile);
             OuiCalendar initStart = rsvd.getStart();
             OuiCalendar initEnd = rsvd.getEnd();
-            OuiCalendar foreStart = new OuiCalendar();
+            OuiCalendar foreStart = OuiCalendar.getInstance();
             foreStart.setJulian(initEnd.getJulian() + 1.0);
             
             if (espInitVariable == null) {
@@ -46,9 +46,9 @@ public class EnsembleDataFromEsp extends EnsembleData {
             String[] years = mesr.getTraceYears();
             int numYears = years.length;
             
-            ArrayList<TimeSeries> historic = new ArrayList<TimeSeries>(numYears);
-            ArrayList<TimeSeries> forecasts = new ArrayList<TimeSeries>(numYears);
-            ArrayList<TimeSeries> output = new ArrayList<TimeSeries>(numYears);
+            ArrayList<TimeSeries> historic = new ArrayList<>(numYears);
+            ArrayList<TimeSeries> forecasts = new ArrayList<>(numYears);
+            ArrayList<TimeSeries> output = new ArrayList<>(numYears);
 
             for (int j = 0; j < numYears; j++) {
                 TimeSeries ts = new TimeSeries();

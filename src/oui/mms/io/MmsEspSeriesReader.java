@@ -31,12 +31,12 @@ public class MmsEspSeriesReader {
         getSteps ();
         dates = new double[steps];
         
-        OuiCalendar foo = new OuiCalendar ();
+        OuiCalendar foo = OuiCalendar.getInstance();
         foo.setJulian(fore_start_mdt.getJulian());
         for (int i = 0; i < steps; i++) {
             dates[i] = foo.getJulian() + i;
         }
-        fore_end_mdt = new OuiCalendar ();
+        fore_end_mdt = OuiCalendar.getInstance();
         fore_end_mdt.setJulian(dates[steps-1]);
     }
     
@@ -53,13 +53,13 @@ public class MmsEspSeriesReader {
             
             //  Read the variable count
             line = in.readLine();
-            int var_count = Integer.valueOf(line).intValue();
+            int var_count = Integer.parseInt(line);
             
             //  Read the start time of the first trace
             line = in.readLine();
             
             try {
-                start_mdt = new OuiCalendar();
+                start_mdt = OuiCalendar.getInstance();
                 start_mdt.setDT (line);
             } catch (SetOuiCalendarException e) {
                 System.out.println("MmsEspSeriesReader:  read bad start time");
@@ -69,7 +69,7 @@ public class MmsEspSeriesReader {
             //  Read the end time of the first trace
             line = in.readLine();
             try {
-                end_mdt = new OuiCalendar();
+                end_mdt = OuiCalendar.getInstance();
                 end_mdt.setDT (line);
             } catch (SetOuiCalendarException e) {
                 System.out.println("MmsEspSeriesReader:  read bad end time");
@@ -96,14 +96,14 @@ public class MmsEspSeriesReader {
         if (traceYears != null) return traceYears;
         
         BufferedReader in = null;
-        ArrayList<String> foo = new ArrayList<String>();
+        ArrayList<String> foo = new ArrayList<>();
         
         try {
             String line;
-            OuiCalendar mdt = new OuiCalendar();
-            OuiCalendar trace_start = new OuiCalendar();
-            OuiCalendar trace_end = new OuiCalendar();
-            float value;
+            OuiCalendar mdt = OuiCalendar.getInstance();
+            OuiCalendar trace_start = OuiCalendar.getInstance();
+            OuiCalendar trace_end = OuiCalendar.getInstance();
+//            float value;
             int year, mon, day, hour, min, sec;
             StringTokenizer st;
             
@@ -111,13 +111,13 @@ public class MmsEspSeriesReader {
             
             //  Read the variable count
             line = in.readLine();
-            int var_count = Integer.valueOf(line).intValue();
+            int var_count = Integer.parseInt(line);
             
             //  Read the start time of the first trace
             line = in.readLine();
             
             try {
-                start_mdt = new OuiCalendar();
+                start_mdt = OuiCalendar.getInstance();
                 start_mdt.setDT(line);
             } catch (SetOuiCalendarException e) {
                 System.out.println("MmsEspSeriesReader:  read bad start time");
@@ -127,24 +127,25 @@ public class MmsEspSeriesReader {
             //  Read the end time of the first trace
             line = in.readLine();
             try {
-                end_mdt = new OuiCalendar();
+                end_mdt = OuiCalendar.getInstance();
                 end_mdt.setDT(line);
             } catch (SetOuiCalendarException e) {
                 System.out.println("MmsEspSeriesReader:  read bad end time");
                 System.out.println(line);
             }
             
-            OuiCalendar endTraceMdt = new OuiCalendar();
+            OuiCalendar endTraceMdt = OuiCalendar.getInstance();
             endTraceMdt.setJulian(end_mdt.getJulian());
             line = in.readLine();
             
             while (line != null) {
                 st = new StringTokenizer(line, " ");
-                year = Integer.valueOf(st.nextToken()).intValue();
-                mon = Integer.valueOf(st.nextToken()).intValue();
-                day = Integer.valueOf(st.nextToken()).intValue();
+                year = Integer.parseInt(st.nextToken());
+                mon = Integer.parseInt(st.nextToken());
+                day = Integer.parseInt(st.nextToken());
                 
-                if ((year == endTraceMdt.getYear()) && (mon == endTraceMdt.getMonth()) && (day == endTraceMdt.getDay())) {
+                if ((year == endTraceMdt.getYear()) && (mon == endTraceMdt.getMonth())
+                        && (day == endTraceMdt.getDay())) {
                     endTraceMdt.set(year + 1, mon - 1, day);
                     foo.add("" + year);
                 }
@@ -170,21 +171,6 @@ public class MmsEspSeriesReader {
         return ret;
     }
     
-//    public MmsEspSeriesReader(int i, String fn, int y, OuiCalendar foreStart) {
-//        this(i, fn, y);
-//        fore_start_mdt = foreStart;
-//    }
-//    
-//    public MmsEspSeriesReader(int i, String fn, int y) {
-//        match_index = i;
-//        file_name = fn;
-//        fore_year = y;
-//    }
-//  
-//    public TimeSeriesCookie getTimeSeries() {
-//        return new TimeSeries("" + fore_year, getDates(), getValues(), fore_start_mdt, fore_end_mdt, null, file_name, "unknown");
-//    }
-    
     public TimeSeries getForecastSeries(int column, int traceNum) {
         
 //        double fore_start = fore_start_mdt.getJulian();
@@ -193,49 +179,16 @@ public class MmsEspSeriesReader {
         return ts;
     }
     
-//    public double[] getDates() {
-//        if (dates == null) {
-//            read();
-//        }
-//        
-//        return (dates);
-//    }
-    
-//    public int getStartYear() {
-//        if (start_mdt == null) read();
-//        return (start_mdt.getYear());
-//    }
-//    
-//    public String getStartTime() {
-//        if (start_mdt == null) read();
-//        return (start_mdt.getControlFileDateTime());
-//    }
-//    
-//    public String getEndTime() {
-//        if (end_mdt == null) read();
-//        return (end_mdt.getControlFileDateTime());
-//    }
-//    
-//    public String getStartFore() {
-//        if (fore_start_mdt == null) read();
-//        return (fore_start_mdt.getControlFileDateTime());
-//    }
-//    
-//    public String getEndFore() {
-//        if (fore_end_mdt == null) read();
-//        return (fore_end_mdt.getControlFileDateTime());
-//    }
-    
     public double[] getValues(int match_index, int traceNum) {
         BufferedReader in = null;
         double[] values = null;
         try {
             String line;
             //            int match_index = -1;
-            OuiCalendar mdt = new OuiCalendar();
-            OuiCalendar trace_start = new OuiCalendar();
-            OuiCalendar trace_end = new OuiCalendar();
-            float value;
+            OuiCalendar mdt = OuiCalendar.getInstance();
+//            OuiCalendar trace_start = OuiCalendar.getInstance();
+//            OuiCalendar trace_end = OuiCalendar.getInstance();
+//            float value;
             int i, year, mon, day, hour, min, sec;
             StringTokenizer st;
             
@@ -243,7 +196,7 @@ public class MmsEspSeriesReader {
             
             //  Read the variable count
             line = in.readLine();
-            int var_count = Integer.valueOf(line).intValue();
+//            int var_count = Integer.parseInt(line);
             
             //  Read the start time of the first trace
             in.readLine();
@@ -252,16 +205,16 @@ public class MmsEspSeriesReader {
 /*
  *  Skip to the requested trace
  */
-            OuiCalendar prevEndDate = new OuiCalendar();
+            OuiCalendar prevEndDate = OuiCalendar.getInstance();
             prevEndDate.set(Integer.parseInt(traceYears[traceNum]), start_mdt.getMonth(), start_mdt.getDay());
             while ((line = in.readLine()) != null) {
                 st = new StringTokenizer(line, " ");
-                year = Integer.valueOf(st.nextToken()).intValue();
-                mon = Integer.valueOf(st.nextToken()).intValue();
-                day = Integer.valueOf(st.nextToken()).intValue();
-                hour = Integer.valueOf(st.nextToken()).intValue();
-                min = Integer.valueOf(st.nextToken()).intValue();
-                sec = Integer.valueOf(st.nextToken()).intValue();
+                year = Integer.parseInt(st.nextToken());
+                mon = Integer.parseInt(st.nextToken());
+                day = Integer.parseInt(st.nextToken());
+                hour = Integer.parseInt(st.nextToken());
+                min = Integer.parseInt(st.nextToken());
+                sec = Integer.parseInt(st.nextToken());
                 mdt.set(year, mon, day, hour, min, sec);
                 
                 if (mdt.equals(prevEndDate)) break;
@@ -282,12 +235,12 @@ public class MmsEspSeriesReader {
                 j++;
                 
                 st = new StringTokenizer(line, " ");
-                year = Integer.valueOf(st.nextToken()).intValue();
-                mon = Integer.valueOf(st.nextToken()).intValue();
-                day = Integer.valueOf(st.nextToken()).intValue();
-                hour = Integer.valueOf(st.nextToken()).intValue();
-                min = Integer.valueOf(st.nextToken()).intValue();
-                sec = Integer.valueOf(st.nextToken()).intValue();
+                year = Integer.parseInt(st.nextToken());
+                mon = Integer.parseInt(st.nextToken());
+                day = Integer.parseInt(st.nextToken());
+                hour = Integer.parseInt(st.nextToken());
+                min = Integer.parseInt(st.nextToken());
+                sec = Integer.parseInt(st.nextToken());
                 mdt.set(year, mon, day, hour, min, sec);
                     
                     if (k == steps) break;
@@ -296,7 +249,7 @@ public class MmsEspSeriesReader {
                         st.nextToken();                   // skip past other values
                     }
                     
-                    values[k] =  Double.valueOf(st.nextToken()).doubleValue();
+                    values[k] =  Double.parseDouble(st.nextToken());
                     
 //                    System.out.println("value = " + values[k] + " date = " + mdt.getMmsDateTime() + " steps = " + steps + " k = " + k);
                     

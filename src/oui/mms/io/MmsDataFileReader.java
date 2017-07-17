@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.OuiCalendar;
 import oui.mms.datatypes.TimeSeries;
 
@@ -87,7 +89,7 @@ public class MmsDataFileReader {
             for (int i = 0; i < var_names.size(); i++) {
                 String var_name = var_names.get(i);
                 Integer foo = max_index.get(i);
-                for (int j = 0; j < foo.intValue(); j++) {
+                for (int j = 0; j < foo; j++) {
                     variableList[count++] = var_name + " " + (j + 1);
                 }
             }
@@ -98,7 +100,7 @@ public class MmsDataFileReader {
     public TimeSeries getTimeSeries(String dataName) {
         StringTokenizer st = new StringTokenizer(dataName, " ");
         String var_name = st.nextToken();
-        int index = Integer.valueOf(st.nextToken()).intValue();
+        int index = Integer.parseInt(st.nextToken());
         return new TimeSeries(dataName, getDates(), getValues(var_name, index), getStart(), getEnd(), dataName, fileName, "unknown");
     }
     
@@ -120,7 +122,7 @@ public class MmsDataFileReader {
                 break;
             } else {
                 Integer foo = max_index.get(i);
-                col_num = col_num + foo.intValue();
+                col_num = col_num + foo;
             }
         }
         
@@ -134,7 +136,7 @@ public class MmsDataFileReader {
     }
     
     private OuiCalendar getDateFromLine(String line) {
-        return getDateFromLine(line, new OuiCalendar ());
+        return getDateFromLine(line, OuiCalendar.getInstance());
     }
     
     private OuiCalendar getDateFromLine(String line, OuiCalendar mdt) {
@@ -194,7 +196,7 @@ public class MmsDataFileReader {
             }
                  
             StringTokenizer st;
-            OuiCalendar currentDate = new OuiCalendar ();
+            OuiCalendar currentDate = OuiCalendar.getInstance();
             int i = 0, j, k = 0;
             while ((line = in.readLine()) != null) {
                 dates[i] = getDateFromLine(line, currentDate).getJulian();
@@ -210,7 +212,7 @@ public class MmsDataFileReader {
                 tok = st.nextToken();
                 tok = st.nextToken();
                 for (j = 0; j < numberOfColumns; j++) {
-                    allData[j][i] = Double.valueOf(st.nextToken()).doubleValue();
+                    allData[j][i] = Double.valueOf(st.nextToken());
                 }
                 
                 k++;
@@ -220,13 +222,12 @@ public class MmsDataFileReader {
                 }
                 i++;
             }
-            
             System.out.println(" done reading " + fileName);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        } catch (IOException ex) {
             System.out.println("Problem reading file " + fileName);
             System.out.println("   line = " + line);
+            Logger.getLogger(MmsDataFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (in!= null) in.close();

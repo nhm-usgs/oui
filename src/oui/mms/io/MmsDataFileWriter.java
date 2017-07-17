@@ -2,6 +2,7 @@ package oui.mms.io;
 
 import java.io.PrintWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import oui.mms.datatypes.OuiCalendar;
 import java.util.Calendar;
@@ -12,11 +13,13 @@ public class MmsDataFileWriter {
     OuiCalendar start_time = null;
     OuiCalendar end_time = null;
     String header;
-    ArrayList<double []> data = new ArrayList<double []>(10);
+    ArrayList<double []> data = new ArrayList<>(10);
     
     public MmsDataFileWriter(OuiCalendar st, OuiCalendar et, String header) {
         start_time = st;
+        start_time.getMillis();
         end_time = et;
+        end_time.getMillis();
         this.header = header;
     }
 
@@ -27,12 +30,11 @@ public class MmsDataFileWriter {
 
     public void write(String fn) {
         String file_name = fn;
+        start_time.getMillis();
         OuiCalendar curr = (OuiCalendar)(start_time.clone());
         
         int j = 0;
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(new FileWriter(file_name));
+        try (PrintWriter out = new PrintWriter(new FileWriter(file_name))) {
             System.out.println ("MmsDataFileWriter: writing file " + file_name);
             out.println(header);
             out.println("################################################################################");
@@ -57,11 +59,8 @@ public class MmsDataFileWriter {
             System.out.println ("Bombed on " + curr.getMmsDateTime());
             System.out.println ("data j = " + j);
             
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            
-        } finally {
-            if (out!= null) out.close();
         }
     }
 }

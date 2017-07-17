@@ -9,6 +9,7 @@ package oui.mms.mmi;
 import gov.usgs.cawsc.gui.MenuBarProvider;
 import gov.usgs.cawsc.gui.WindowFactory;
 import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -23,7 +24,11 @@ import oui.mms.datatypes.OuiCalendar;
 public class MmsEspRunSimpleGui extends JPanel implements MenuBarProvider {
     private MmsEspModelRunner srm;
 
-    /** Creates new form MmsInputDataFromDssGui */
+    /** Creates new form MmsInputDataFromDssGui
+     * @param mmsDataFileName
+     * @param data_file_start
+     * @param data_file_end
+     * @param srm */
     public MmsEspRunSimpleGui(String mmsDataFileName, OuiCalendar data_file_start, OuiCalendar data_file_end, MmsEspModelRunner srm) {
         this(mmsDataFileName, data_file_start, data_file_end, null, srm);
     }
@@ -38,19 +43,19 @@ public class MmsEspRunSimpleGui extends JPanel implements MenuBarProvider {
         /*
          *  Set the default start date to one day past the last day of the data file
          */
-        queryStart = (OuiCalendar)(data_file_end.clone());
+        queryStart = OuiCalendar.getClone(data_file_end);
         queryStart.setJulian(queryStart.getJulian() + 1.0);
 
         /*
          * Set the default end date to Dec 31
          */
-        queryEnd = new OuiCalendar ();
+        queryEnd = OuiCalendar.getInstance();
         queryEnd.set(queryStart.get (Calendar.YEAR), 11, 31, 0, 0, 0);
 
         /*
          * Set the end limit of the forecast to one year after the end of the data file
          */
-        OuiCalendar foo = (OuiCalendar)(data_file_end.clone());
+        OuiCalendar foo = OuiCalendar.getClone(data_file_end);
         foo.setJulian(data_file_start.getJulian() + 730.0);
 
         try {
@@ -75,6 +80,7 @@ public class MmsEspRunSimpleGui extends JPanel implements MenuBarProvider {
         this.setSize(this.getPreferredSize());
     }
 
+    @Override
     public JMenuBar getMenuBar() {
         return jMenuBar1;
     }
@@ -219,14 +225,16 @@ public class MmsEspRunSimpleGui extends JPanel implements MenuBarProvider {
     private void endSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_endSpinnerChange
         SpinnerModel dateModel = endSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryEnd.setTime(((SpinnerDateModel)dateModel).getDate());
+            java.util.Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryEnd.setDate(date);
         }
     }//GEN-LAST:event_endSpinnerChange
 
     private void startSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_startSpinnerChange
         SpinnerModel dateModel = startSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryStart.setTime(((SpinnerDateModel)dateModel).getDate());
+            Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryStart.setDate(date);
         }
     }//GEN-LAST:event_startSpinnerChange
 
@@ -302,5 +310,4 @@ public class MmsEspRunSimpleGui extends JPanel implements MenuBarProvider {
      * Holds value of property queryStart.
      */
     private OuiCalendar queryStart;
-
 }

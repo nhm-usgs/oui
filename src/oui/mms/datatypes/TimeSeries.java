@@ -27,7 +27,8 @@ public class TimeSeries {
     public TimeSeries() {
     }
         
-    public TimeSeries(String name, double[] dates, double[] vals, OuiCalendar start, OuiCalendar end, String description, String source, String units) {
+    public TimeSeries(String name, double[] dates, double[] vals,
+            OuiCalendar start, OuiCalendar end, String description, String source, String units) {
         this.name = name;
         this.dates = dates;
         this.vals = vals;
@@ -48,30 +49,62 @@ public class TimeSeries {
         this.units = "unknown";
     }
         
-    public double[] getDates() {return dates;}
+    public double[] getDates() {
+        return dates;
+    }
     
     public final void setDates(double[] dates) {
         this.dates = dates;
-        this.start = new OuiCalendar ();
+        this.start = OuiCalendar.getInstance();
         start.setJulian(dates[0]);
-        this.end = new OuiCalendar ();
+        this.end = OuiCalendar.getInstance();
         end.setJulian(dates[dates.length - 1]);
     }
     
-    public String getDescription() {return description;}
-    public void setDescription(String description) {this.description = description;}
-    public OuiCalendar getEnd() {return end;}
-    public void setEnd(OuiCalendar end) {this.end = end;}
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
-    public String getSource() {return source;}
-    public void setSource(String source) {this.source = source;}
-    public OuiCalendar getStart() {return start;}
-    public void setStart(OuiCalendar start) {this.start = start;}
-    public String getUnits() {return units;}
-    public void setUnits(String units) {this.units = units;}
-    public double[] getVals() {return vals;}
-    public void setVals(double[] vals) {this.vals = vals;}
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public OuiCalendar getEnd() {
+        return end;
+    }
+    public void setEnd(OuiCalendar end) {
+        end.getMillis();
+        this.end = end;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getSource() {
+        return source;
+    }
+    public void setSource(String source) {
+        this.source = source;
+    }
+    public OuiCalendar getStart() {
+        return start;
+    }
+    public void setStart(OuiCalendar start) {
+        start.getMillis();
+        this.start = start;
+    }
+    public String getUnits() {
+        return units;
+    }
+    public void setUnits(String units) {
+        this.units = units;
+    }
+    public double[] getVals() {
+        return vals;
+    }
+    public void setVals(double[] vals) {
+        this.vals = vals;
+    }
     @Override
     public String toString() {
         return name;
@@ -100,11 +133,11 @@ public class TimeSeries {
         ts.setSource(OuiProjectXml.getElementContent(node, "@source", null));
         ts.setUnits(OuiProjectXml.getElementContent(node, "@units", null));
 
-        OuiCalendar start = new OuiCalendar();
+        OuiCalendar start = OuiCalendar.getInstance();
         start.setJulian(Double.parseDouble(OuiProjectXml.getElementContent(node, "@start", null)));
         ts.setStart(start);
 
-        OuiCalendar end = new OuiCalendar();
+        OuiCalendar end = OuiCalendar.getInstance();
         end.setJulian(Double.parseDouble(OuiProjectXml.getElementContent(node, "@end", null)));
         ts.setEnd(end);
 
@@ -136,10 +169,9 @@ public class TimeSeries {
         
         dates = new_dates;
         vals = new_data;
-        this.start = new OuiCalendar ();
+        this.start = OuiCalendar.getInstance();
         start.setJulian(dates[0]);
-        this.end = new OuiCalendar ();
+        this.end = OuiCalendar.getInstance();
         end.setJulian(dates[count -1]);
     }
-    
 }

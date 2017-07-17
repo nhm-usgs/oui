@@ -74,7 +74,7 @@ public class MmsOuiEspReader  {
         for (int i = 0; i < outputFiles.size(); i++) {
             
             outputTS = (TimeSeries)(outputFiles.get(i));
-            System.out.println ("MmmOuiEspReader: outputTS = " + outputTS.getName());
+//            System.out.println ("MmmOuiEspReader: outputTS = " + outputTS.getName());
 
             trace_dates = outputTS.getDates();
             trace_data = outputTS.getVals();

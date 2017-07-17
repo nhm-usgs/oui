@@ -38,25 +38,30 @@ public class MmsRunSimpleGui extends JPanel implements MenuBarProvider {
         /*
          *  Set the default start date to start of the data file
          */
+        data_file_start.getMillis();
         queryStart = (OuiCalendar)(data_file_start.clone());
 
         /*
          * Set the default end date to end of the data file
          */
+        data_file_end.getMillis();
         queryEnd = (OuiCalendar)(data_file_end.clone());
 
         /*
          * Set the end limit of the forecast to one year after the end of the data file
          */
-        startSpinner.setModel(new SpinnerDateModel(queryStart.getTime(), data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
+        startSpinner.setModel(new SpinnerDateModel(queryStart.getTime(),
+                data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
         startSpinner.setEditor(new JSpinner.DateEditor(startSpinner, "yyyy-MM-dd"));
 
-        endSpinner.setModel(new SpinnerDateModel(queryEnd.getTime(), data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
+        endSpinner.setModel(new SpinnerDateModel(queryEnd.getTime(),
+                data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
         endSpinner.setEditor(new JSpinner.DateEditor(endSpinner, "yyyy-MM-dd"));
 
         this.setSize(this.getPreferredSize());
     }
 
+    @Override
     public JMenuBar getMenuBar() {
         return jMenuBar1;
     }
