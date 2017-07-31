@@ -113,9 +113,7 @@ public class CsvFileReader {
  
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SetOuiCalendarException ex) {
+        } catch (IOException | SetOuiCalendarException ex) {
             Logger.getLogger(CsvFileReader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             start = null;

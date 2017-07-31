@@ -17,12 +17,11 @@ import oui.treetypes.OuiModelTreeNode;
  * @version 2.0
  */
 public class SimpleEspToolTreeNode extends OuiModelTreeNode {
-    private String espXmlFile;
+    private final String espXmlFile;
 
 
     /** Create an MMSDataTreeNode.
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public SimpleEspToolTreeNode(Node xml_node) {
         super(xml_node);

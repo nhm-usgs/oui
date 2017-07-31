@@ -66,17 +66,21 @@ public abstract class AbstractTreeTableModel implements TreeTableModel {
     // Default implmentations for methods in the TreeModel interface. 
     //
 
+    @Override
     public Object getRoot() {
         return root;
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         return getChildCount(node) == 0; 
     }
 
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {}
 
     // This is not called in the JTree's default mode: use a naive implementation. 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         for (int i = 0; i < getChildCount(parent); i++) {
 	    if (getChild(parent, i).equals(child)) { 
@@ -86,10 +90,12 @@ public abstract class AbstractTreeTableModel implements TreeTableModel {
 	return -1; 
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener l) {
         listenerList.add(TreeModelListener.class, l);
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener l) {
         listenerList.remove(TreeModelListener.class, l);
     }
@@ -202,16 +208,22 @@ public abstract class AbstractTreeTableModel implements TreeTableModel {
     // Default impelmentations for methods in the TreeTableModel interface. 
     //
 
+    @Override
     public Class getColumnClass(int column) { return Object.class; }
 
    /** By default, make the column with the Tree in it the only editable one. 
     *  Making this column editable causes the JTable to forward mouse 
     *  and keyboard events in the Tree column to the underlying JTree. 
+     * @param node
+     * @param column
+     * @return 
     */ 
+    @Override
     public boolean isCellEditable(Object node, int column) { 
          return getColumnClass(column) == TreeTableModel.class; 
     }
 
+    @Override
     public void setValueAt(Object aValue, Object node, int column) {}
 
 

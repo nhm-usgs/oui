@@ -9,6 +9,7 @@ package oui.mms.mmi;
 import gov.usgs.cawsc.gui.MenuBarProvider;
 import gov.usgs.cawsc.gui.WindowFactory;
 import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -22,6 +23,8 @@ import oui.mms.datatypes.OuiCalendar;
  */
 public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
     private final MmsSingleModelRunner srm;
+    private OuiCalendar queryStart;
+    private OuiCalendar queryEnd;
 
     /** Creates new form MmsInputDataFromDssGui
      * @param mmsDataFileName
@@ -36,10 +39,8 @@ public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
         mmsDataFileLable.setText("MMS Input Data File: " + mmsDataFileName);
         dateLabel.setText("(has data from " + data_file_start.getSQLDate() + " to " + data_file_end.getSQLDate() + ")");
 
-        data_file_end.getMillis();
-        queryEnd = (OuiCalendar)(data_file_end.clone());
-        data_file_start.getMillis();
-        queryStart = (OuiCalendar)(data_file_start.clone());
+        queryEnd = OuiCalendar.getClone(data_file_end);
+        queryStart = OuiCalendar.getClone(data_file_start);
 
         startSpinner.setModel(new SpinnerDateModel(queryStart.getTime(),
                 data_file_start.getTime(), data_file_end.getTime(), Calendar.DAY_OF_MONTH));
@@ -52,6 +53,7 @@ public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
         this.setSize(this.getPreferredSize());
     }
 
+    @Override
     public JMenuBar getMenuBar() {
         return jMenuBar1;
     }
@@ -196,14 +198,16 @@ public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
     private void endSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_endSpinnerChange
         SpinnerModel dateModel = endSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryEnd.setTime(((SpinnerDateModel)dateModel).getDate());
+            Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryEnd.setDate(date);
         }
     }//GEN-LAST:event_endSpinnerChange
 
     private void startSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_startSpinnerChange
         SpinnerModel dateModel = startSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryStart.setTime(((SpinnerDateModel)dateModel).getDate());
+            Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryStart.setDate(date);
         }
     }//GEN-LAST:event_startSpinnerChange
 
@@ -270,14 +274,6 @@ public class MmsSingleBasinRunGui extends JPanel implements MenuBarProvider {
     private javax.swing.JSpinner startSpinner;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Holds value of property queryEnd.
-     */
-    private OuiCalendar queryEnd;
 
-    /**
-     * Holds value of property queryStart.
-     */
-    private OuiCalendar queryStart;
 
 }

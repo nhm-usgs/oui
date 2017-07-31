@@ -121,7 +121,7 @@ public class MmsOuiEspRunTreeNode extends MmsModelTreeNode implements MmsEspMode
  *  Get all the data
  */
         double[][] all_data = dataFileReader.getAllData();
-        double[] dates = dataFileReader.getDates();
+//        double[] dates = dataFileReader.getDates();
         int num_of_columns = dataFileReader.getNumberOfColumns();
         String header = "ESP Data File" + dataFileReader.getHeader();
 /*

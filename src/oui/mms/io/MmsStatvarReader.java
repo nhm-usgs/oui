@@ -136,14 +136,9 @@ public class MmsStatvarReader {
             end = OuiCalendar.getInstance();
             end.setJulian(dates[data_line_count - 1]);
 
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             start = null;
             end = null;
-//            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            start = null;
-            end = null;
-
         } finally {
             try {
                 if (in != null) {
@@ -172,16 +167,11 @@ public class MmsStatvarReader {
                 variableIndexes[i] = Integer.valueOf (st.nextToken ());
             }
             
-        } catch (IOException e) {
-            //            e.printStackTrace();
+        } catch (IOException | NumberFormatException e) {
             variableNames = null;
             variableIndexes = null;
-        } catch (NumberFormatException e) {
-//            e.printStackTrace();
-            variableNames = null;
-            variableIndexes = null;
-            
-        } finally {
+        }
+         finally {
             try {
                 if (in!= null) in.close();
             } catch (IOException E) {}
@@ -216,8 +206,6 @@ public class MmsStatvarReader {
             }
             in.close();
             in = null;
-            
-            
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MmsStatvarReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -281,20 +269,13 @@ public class MmsStatvarReader {
             }
             System.out.println(" done");
             
-         } catch (IOException e) {
-//            e.printStackTrace();
+         } catch (IOException | NumberFormatException e) {
              values = null;
-         } catch (NumberFormatException e) {
-
-//            e.printStackTrace();
-             values = null;
-            
-        } finally {
+         } finally {
             try {
                 if (in!= null) in.close();
             }  catch (IOException E) {}   
         }
-        
         return values;
     }
 }

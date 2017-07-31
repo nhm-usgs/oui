@@ -23,7 +23,11 @@ import oui.mms.datatypes.OuiCalendar;
 public class MmsRunSimpleGui extends JPanel implements MenuBarProvider {
     private MmsSingleModelRunner srm;
 
-    /** Creates new form MmsInputDataFromDssGui */
+    /** Creates new form MmsInputDataFromDssGui
+     * @param mmsDataFileName
+     * @param data_file_start
+     * @param data_file_end
+     * @param srm */
     public MmsRunSimpleGui(String mmsDataFileName, OuiCalendar data_file_start, OuiCalendar data_file_end, MmsSingleModelRunner srm) {
         this(mmsDataFileName, data_file_start, data_file_end, null, srm);
     }
@@ -206,14 +210,16 @@ public class MmsRunSimpleGui extends JPanel implements MenuBarProvider {
     private void endSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_endSpinnerChange
         SpinnerModel dateModel = endSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryEnd.setTime(((SpinnerDateModel)dateModel).getDate());
+            java.util.Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryEnd.setDate(date);
         }
     }//GEN-LAST:event_endSpinnerChange
 
     private void startSpinnerChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_startSpinnerChange
         SpinnerModel dateModel = startSpinner.getModel();
         if (dateModel instanceof SpinnerDateModel) {
-            queryStart.setTime(((SpinnerDateModel)dateModel).getDate());
+            java.util.Date date = ((SpinnerDateModel)dateModel).getDate();
+            queryStart.setDate(date);
         }
     }//GEN-LAST:event_startSpinnerChange
 

@@ -8,8 +8,8 @@ import oui.mms.datatypes.Parameter;
 import oui.mms.datatypes.ParameterSet;
 
 public class MmsDefaultParamsReader {
-    private FileReader file;
-    private String fileName;
+    private final FileReader file;
+    private final String fileName;
     private ParameterSet mps;
     
     public MmsDefaultParamsReader(String fileName) throws IOException {
@@ -20,15 +20,6 @@ public class MmsDefaultParamsReader {
         }
         this.fileName = fileName;
     }
-    
-//    public MmsDefaultParamsReader(FileReader file) throws IOException {
-//        this(file, Logger.getLogger(MmsParamsReader.class.getName()));
-//    }
-//
-//    public MmsDefaultParamsReader(FileReader file, Logger log) throws IOException {
-//        this.file = file;
-//        this.log = log;
-//    }
     
     public ParameterSet read() throws IOException {
 
@@ -68,7 +59,7 @@ public class MmsDefaultParamsReader {
 //                System.out.println ("MmsDefaultParamsReader: dimension name = " + name);
                 line = in.readLine();
                 String value = line.substring(8);
-                int size = Integer.valueOf(value).intValue();
+                int size = Integer.parseInt(value);
                 line = in.readLine();
                 String desc = line.substring(8);
                 
@@ -105,13 +96,13 @@ public class MmsDefaultParamsReader {
 //                System.out.println ("MmsDefaultParamsReader reading parameter help " + help);
                 line = in.readLine();
                 String ndim = line.substring(12);
-                int num_dim = Integer.valueOf(ndim).intValue();
+                int num_dim = Integer.parseInt(ndim);
 //                System.out.println ("MmsDefaultParamsReader reading parameter num_dim " + num_dim);
                 line = in.readLine();
                 String d = line.substring(12);
                 line = in.readLine();
                 String s = line.substring(12);
-                int size = Integer.valueOf(s).intValue();
+                int size = Integer.parseInt(s);
 //                System.out.println ("MmsDefaultParamsReader reading parameter size " + size);
                 line = in.readLine();
                 String type = line.substring(12);
@@ -119,7 +110,7 @@ public class MmsDefaultParamsReader {
                 String units = line.substring(12);
                 line = in.readLine();
                 String wid = line.substring(12);
-                int width = Integer.valueOf(wid).intValue();
+                int width = Integer.parseInt(wid);
 
                 String max = null;
                 String min = null;
@@ -145,38 +136,40 @@ public class MmsDefaultParamsReader {
 
                 Class type_class = null;
                 Object vals = null;
-                if (type.equals("double")) {
-                    type_class = Double.class;
-
-                    double val = Double.parseDouble(defaul);
-                    vals = new double[size];
-                    for (int i = 0; i < size; i++) {
-                        ((double[])vals)[i] = val;
-                    }
-          
-                } else if (type.equals("float")) {
-                    type_class = Float.class;
-
-                    float val = Float.parseFloat(defaul);
-                    vals = new float[size];
-                    for (int i = 0; i < size; i++) {
-                        ((float[]) vals)[i] = val;
-                    }
-
-                } else if (type.equals("long")) {
-                    type_class = Integer.class;
-
-                    int val = Integer.parseInt(defaul);
-                    vals = new int[size];
-                    for (int i = 0; i < size; i++) {
-                        ((int[])vals)[i] = val;
-                    }
-                } else {
-                    type_class = String.class;
-                    vals = new String[size];
-                    for (int i = 0; i < size; i++) {
-                        ((String[])vals)[i] = "default";
-                    }
+                switch (type) {
+                    case "double":
+                        {
+                            type_class = Double.class;
+                            double val = Double.parseDouble(defaul);
+                            vals = new double[size];
+                            for (int i = 0; i < size; i++) {
+                                ((double[])vals)[i] = val;
+                            }       break;
+                        }
+                    case "float":
+                        {
+                            type_class = Float.class;
+                            float val = Float.parseFloat(defaul);
+                            vals = new float[size];
+                            for (int i = 0; i < size; i++) {
+                                ((float[]) vals)[i] = val;
+                            }       break;
+                        }
+                    case "long":
+                        {
+                            type_class = Integer.class;
+                            int val = Integer.parseInt(defaul);
+                            vals = new int[size];
+                            for (int i = 0; i < size; i++) {
+                                ((int[])vals)[i] = val;
+                            }       break;
+                        }
+                    default:
+                        type_class = String.class;
+                        vals = new String[size];
+                        for (int i = 0; i < size; i++) {
+                            ((String[])vals)[i] = "default";
+                        }   break;
                 }
                 
                 Dimension[] dims = new Dimension[num_dim];
@@ -203,12 +196,9 @@ public class MmsDefaultParamsReader {
                 line = in.readLine();
             }
 
-        } catch (IOException ex) {
+        } catch (IOException | NumberFormatException ex) {
             System.out.println ("MmsDefaultParamsReader: Problem reading parameters: " + name);
-            ex.printStackTrace();
             throw ex;
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
         } finally {
             try {
                 if (in!= null) {
@@ -236,7 +226,6 @@ public class MmsDefaultParamsReader {
         } catch (java.io.FileNotFoundException e) {
             System.out.println(arg[0] + " not found");
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println(arg[0] + " io exception");
         }
     }

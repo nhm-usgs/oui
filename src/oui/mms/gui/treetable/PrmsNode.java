@@ -31,38 +31,16 @@ public class PrmsNode {
 
     /**
      * Returns the the string to be used to display this leaf in the JTree.
+     * @return 
      */
     @Override
     public String toString() {
         return name;
     }
 
-    /**
-     * Loads the children, caching the results in the children ivar.
-     */
-//    protected Object[] getChildren() {
-//        if (children != null) {
-//            return children;
-//        }
-////        try {
-////            String[] files = file.list();
-////            if (files != null) {
-////                fileMS.sort(files);
-////                children = new PrmsNode[files.length];
-////                String path = file.getPath();
-////                for (int i = 0; i < files.length; i++) {
-////                    File childFile = new File(path, files[i]);
-////                    children[i] = new PrmsNode(childFile);
-////                }
-////            }
-////        } catch (SecurityException se) {
-////        }
-//        return children;
-//    }
-
     public void addChild (PrmsNode node) {
         if (children == null) {
-            children = new ArrayList<PrmsNode>();
+            children = new ArrayList<>();
         }
         children.add(node);
     }

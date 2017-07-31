@@ -7,17 +7,22 @@
 package oui.mms;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;	//	DOM will parse XML file and can utilze the tree from there...
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import oui.gui.Oui;
 import oui.util.OuiClassLoader;
 
@@ -46,7 +51,7 @@ public class OuiProjectXml {
             factory.setNamespaceAware(true);
             //	factory.setIgnoringElementContentWhitespace(true);
             builder = factory.newDocumentBuilder();
-        } catch (Exception E) {
+        } catch (ParserConfigurationException E) {
             logger.log(Level.WARNING, E.getMessage());
         }
     }
@@ -67,18 +72,17 @@ public class OuiProjectXml {
             Object[] args = {projectFile};
             opxml = (OuiProjectXml) constructor.newInstance(args);
 
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             logger.log(Level.WARNING, "{0} invocation exception.", xml_adapt_class);
         }
         
         return opxml;
     }
     
-    public static OuiProjectXml getOuiProjectXml() { return opxml; }
+    public static OuiProjectXml getOuiProjectXml() {
+        return opxml;
+    }
     
-    /** Create a OuiProjectXml object.
-     * @param oui The OUI object for this panel.
-     */
     public OuiProjectXml(String projectFile) {
         this.projectFile = projectFile;
         
@@ -150,7 +154,7 @@ public class OuiProjectXml {
         
         try {
             doc = builder.parse(url);
-        } catch (Exception E) {
+        } catch (IOException | SAXException E) {
             logger.log(Level.WARNING, E.getMessage());
         }
         return doc;
@@ -202,6 +206,8 @@ public class OuiProjectXml {
     
     /**
      * returns the content of a node as a String
+     * @param n
+     * @return 
      */
     public static String getNodeContent(Node n) {
         String v;
@@ -226,7 +232,7 @@ public class OuiProjectXml {
     public static NodeList selectNodes(Node n, String xqlString) {
         try {
             return XPathAPI.selectNodeList(n, xqlString);
-        } catch (Exception E) {
+        } catch (TransformerException E) {
             System.err.println(E.getMessage());
             return null;
         }
@@ -326,21 +332,16 @@ public class OuiProjectXml {
         return getPath (getElementContent (node, "@path", null));
     }
     
-    public void addPath (String tag, String path) {
-        try {
-            Element new_node = doc.createElement("path");
-            Attr attrib = doc.createAttribute("name");
-            attrib.setValue(tag);
-            new_node.setAttributeNode(attrib);
-            
-            attrib = doc.createAttribute("path");
-            attrib.setValue(path);
-            new_node.setAttributeNode(attrib);
+    public void addPath(String tag, String path) {
+        Element new_node = doc.createElement("path");
+        Attr attrib = doc.createAttribute("name");
+        attrib.setValue(tag);
+        new_node.setAttributeNode(attrib);
 
-            pathsXmlNode.appendChild(new_node);
-            
-        } catch (DOMException e) {
-            e.printStackTrace();
-        }
+        attrib = doc.createAttribute("path");
+        attrib.setValue(path);
+        new_node.setAttributeNode(attrib);
+
+        pathsXmlNode.appendChild(new_node);
     }
 }

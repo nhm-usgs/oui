@@ -17,10 +17,7 @@ public class MmsProjectXml extends OuiProjectXml {
     public static MmsProjectXml getMmsProjectXml() {
         return (MmsProjectXml)opxml;
     }
-    
-    /** Create a MmsProjectXml object.
-     * @param oui The OUI object for this panel.
-     */
+
     public MmsProjectXml(String projectFile) {
         super (projectFile);
     }
@@ -169,7 +166,7 @@ public class MmsProjectXml extends OuiProjectXml {
             logger.log(Level.WARNING, "No xml defining the Data File Variable index (@variableIndex tag) nodes for the DMI Data File {0} column index {1}", new Object[]{dmiXmlTag, col_index});
         }
         
-        int i = Integer.valueOf (index).intValue ();
+        int i = Integer.parseInt (index);
         return i;
     } 
     
@@ -244,7 +241,7 @@ public class MmsProjectXml extends OuiProjectXml {
         }
         
         Node station_node = null;
-        if (station_type.equals("stations")) {
+        if (station_type != null && station_type.equals("stations")) {
             station_node = selectSingleNode(projectXmlNode, "MetaData/data/stations/station[@station='" + station_lookup_name + "']");
             if (station_node == null) {
                 logger.log(Level.WARNING, "No climate station node for MetaData/data/stations/station[@station=''{0}'']", station_lookup_name);
@@ -300,7 +297,7 @@ public class MmsProjectXml extends OuiProjectXml {
             s = "-99.9";
         }
 
-        double d = -99.9;
+        double d;
         try {
              d = Double.parseDouble(s);
         } catch (NumberFormatException e) {

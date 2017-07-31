@@ -41,7 +41,8 @@ public class MmsOuiMultiBasinEspRunTreeNode extends MmsModelTreeNode implements 
     private String[] xrouteEspVariableIndex;
     private String mmi = null;
     
-    /** Creates a new instance of SingleRunMmi */
+    /** Creates a new instance of SingleRunMmi
+     * @param xml_node */
     public MmsOuiMultiBasinEspRunTreeNode(Node xml_node) {
         super(xml_node);
         mmi = MmsProjectXml.getElementContent(xml_node, "@mmi", null);
@@ -87,7 +88,7 @@ public class MmsOuiMultiBasinEspRunTreeNode extends MmsModelTreeNode implements 
         for (int i = 0; i < mappingNodes.getLength(); i++) {  // put the subbasin list in order
             int index = -1;
             try {
-                index = Integer.decode(MmsProjectXml.getElementContent(mappingNodes.item(i), "@modelOrder", null)).intValue();
+                index = Integer.decode(MmsProjectXml.getElementContent(mappingNodes.item(i), "@modelOrder", null));
             } catch (NumberFormatException e) {
                 System.out.println ("Bad value for modelOrder tag in node" + mappingNodes.item(i));
             }
@@ -122,7 +123,7 @@ public class MmsOuiMultiBasinEspRunTreeNode extends MmsModelTreeNode implements 
         for (int i = 0; i < mappingNodes.getLength(); i++) {
             int index = -1;
             try {
-                index = Integer.decode(MmsProjectXml.getElementContent(mappingNodes.item(i), "@modelOrder", null)).intValue();
+                index = Integer.decode(MmsProjectXml.getElementContent(mappingNodes.item(i), "@modelOrder", null));
             } catch (NumberFormatException e) {
                 System.out.println ("Bad value for modelOrder tag in node" + mappingNodes.item(i));
             }
@@ -139,6 +140,7 @@ public class MmsOuiMultiBasinEspRunTreeNode extends MmsModelTreeNode implements 
         }
     }
     
+    @Override
     public void runModel(OuiCalendar forecastStart, OuiCalendar forecastEnd) {
 /*
  *  Generate the ESP run and save to XML file
@@ -147,22 +149,21 @@ public class MmsOuiMultiBasinEspRunTreeNode extends MmsModelTreeNode implements 
         EnsembleData ed = new EnsembleData(dataFileBasinName, null, null, null);
         MmsOuiEspRun.writeEspDataFiles(ed, initLength, data_file, espDataDestDir, forecastStart, forecastEnd);
         
-        for (int i = 0; i < subBasins.length; i++) {
-            ed.setName(subBasins[i]);
+        for (String subBasin : subBasins) {
+            ed.setName(subBasin);
             MmsOuiEspRun.runEsp(ed, mmsWorkspace, executable, envFile, controlFileExt, espIODir, espVariableName, espVariableIndex);
             MmsOuiEspReader.readEsp(ed);
-            
-            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";
+            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasin + ".xml";
             ed.save(xml_file);
         }
 /*
- *  Load ESP run into EnsembleData
- */
+         *  Load ESP run into EnsembleData
+         */
         
-        ArrayList<EnsembleData> localEnsembleData = new ArrayList<EnsembleData>(subBasins.length);
+        ArrayList<EnsembleData> localEnsembleData = new ArrayList<>(subBasins.length);
         
         for (int i = 0; i < subBasins.length; i++) {
-            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";;
+            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";
             ed = EnsembleData.load(xml_file);
             localEnsembleData.add(i, ed);
         }

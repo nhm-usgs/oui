@@ -8,7 +8,6 @@ package oui.mms.mmi;
 
 import javax.swing.JFrame;
 import org.w3c.dom.Node;
-import oui.gui.OuiGui;
 import oui.treetypes.OuiModelTreeNode;
 
 /**This class is a template to register an MMS model
@@ -44,7 +43,6 @@ public class MmsModelTreeNode extends OuiModelTreeNode {
      * Create an MmsModelTreeNode.
      * 
      * @param xml_node The xml node element which describes this shape/dbf file combo.
-     * @param parent The OUI tree node parent of this OUI tree node.
      */
     public MmsModelTreeNode(Node xml_node) {
         super(xml_node);
@@ -55,6 +53,7 @@ public class MmsModelTreeNode extends OuiModelTreeNode {
     
     /** Extending classes must implement the code that performs the declare function for the model.
      */
+    @Override
     public void declare() {
 //        System.out.println("MmsModelTreeNode: declare");
     }
@@ -62,18 +61,21 @@ public class MmsModelTreeNode extends OuiModelTreeNode {
     /** Extending classes must implement the code that performs the initialize function for the model.
      */
         
+    @Override
     public void initialize() {
 //        System.out.println("MmsModelTreeNode: initialize");
     }
     
     /** Extending classes must implement the code that performs the run function for the model.
      */
+    @Override
     public void run() {
 //        System.out.println("running model");
     }
     
     /** Extending classes must implement the code that performs the cleanup function for the model.
      */
+    @Override
     public void cleanup() {
 //        System.out.println("MmsModelTreeNode: cleanup");
     }

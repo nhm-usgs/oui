@@ -27,13 +27,13 @@ public class MmsParamsDifference {
  *  Check dimensions
  */
             Iterator<String> foo = mp1.getDimensionNames();
-            TreeSet<String> sorted_dim = new TreeSet<String> ();
+            TreeSet<String> sorted_dim = new TreeSet<> ();
             while (foo.hasNext()) {
                 sorted_dim.add(foo.next());
             }
             
             foo = mp2.getDimensionNames();
-            TreeSet<String>  dim_names2 = new TreeSet<String> ();
+            TreeSet<String>  dim_names2 = new TreeSet<> ();
             while (foo.hasNext()) {
                 dim_names2.add(foo.next());
             }
@@ -107,7 +107,7 @@ public class MmsParamsDifference {
 //            TreeSet<String> sorted_param1 = new TreeSet<String> (param_foo);
             
             foo = mp1.getParameterNames();
-            TreeSet<String> sorted_param1 = new TreeSet<String> ();
+            TreeSet<String> sorted_param1 = new TreeSet<> ();
             while (foo.hasNext()) {
                 sorted_param1.add(foo.next());
             }
@@ -116,7 +116,7 @@ public class MmsParamsDifference {
 //            TreeSet<String> sorted_param2 = new TreeSet<String> (param_foo2);
             
             foo = mp1.getParameterNames();
-            TreeSet<String> sorted_param2 = new TreeSet<String>();
+            TreeSet<String> sorted_param2 = new TreeSet<>();
             while (foo.hasNext()) {
                 sorted_param2.add(foo.next());
             }
@@ -207,17 +207,12 @@ public class MmsParamsDifference {
     
     private static boolean isSame (double v1, double v2) {
         double tolerence = 0.001;
-        
         double diff = v1 - v2;
         
         if (v1 == 0.0) {
-            if (v2 == 0.0) return true;
-            else return false;
+            return v2 == 0.0;
         }
-        
-        if (Math.abs(diff / v1) < tolerence) return true;
-        else return false;
-
+        return Math.abs(diff / v1) < tolerence;
     }
 }
 

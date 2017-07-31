@@ -11,9 +11,9 @@ import java.util.StringTokenizer;
 import oui.mms.datatypes.ParameterSet;
 
 public class MmsVarInfoReader {
-    private FileReader file;
+    private final FileReader file;
 //    private Logger log;
-    private String fileName;
+    private final String fileName;
     private VariableSet mvs;
     private ParameterSet mps;
     
@@ -115,7 +115,6 @@ public class MmsVarInfoReader {
 
         } catch (IOException ex) {
             System.out.println ("MmsVarInfoReader: Problem reading variable info file");
-            ex.printStackTrace();
             throw ex;
         } catch (NumberFormatException ex) {
             System.out.println ("MmsVarInfoReader: NumberFormatException while reading variable info file");
@@ -136,19 +135,5 @@ public class MmsVarInfoReader {
         }
         return mvs;
     }
-    
-//    public static void main(String arg[]) {
-//        try {
-//            MmsVarInfoReader mp = new MmsVarInfoReader(new FileReader(arg[0]));
-//            VariableSet ps = mp.read();
-//            
-////            System.out.println ("Dimensions = " + ps.getDims());
-//            System.out.println ("Variables = " + ps.getVariables());
-//            
-//        } catch (java.io.FileNotFoundException e) {
-//            System.out.println(arg[0] + " not found");
-//        } catch (IOException e) {
-//            System.out.println(arg[0] + " io exception");
-//        }
-//    }
+
 }

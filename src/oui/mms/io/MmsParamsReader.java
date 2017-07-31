@@ -10,7 +10,7 @@ import oui.mms.datatypes.ParameterSet;
 public class MmsParamsReader {
 
     private static final Logger logger = Logger.getLogger(MmsParamsReader.class.getName());
-    private File file;
+    private final File file;
     private ParameterSet mps;
 
     public MmsParamsReader(String fileName) throws IOException {
@@ -35,18 +35,7 @@ public class MmsParamsReader {
     }
 
     private void readFormat() {
-//
-// Determine line separator -- this is needed so the format doesn't change
-// when the file is written back out
-//     PC   is CR + LF  "\r\n"
-//     Unix is LF       "\n"
-//
-// The complicating factor is that a Unix format file can be opened, edited, and
-// written back out on PC and the format should not change.
-//
 
-//        String line = null;
-//        String name = null;
         BufferedReader in = null;
 
         try {
@@ -180,7 +169,7 @@ public class MmsParamsReader {
                     String name = line;
                     int size = -999;
                     try {
-                        size = Integer.valueOf(readLine(in)).intValue();
+                        size = Integer.parseInt(readLine(in));
                     } catch (NumberFormatException e) {
                         logger.log(Level.SEVERE, "Problem reading the size of dimension {0} in parameter file {1}\nLine is {2} \nError is {3} line number {4}", new Object[]{name, file.getAbsolutePath(), line, e.getMessage(), lineCount});
                     }
@@ -373,8 +362,8 @@ public class MmsParamsReader {
                     while (i < parameter.getSize()) {
                         line = readLine(in);
                         String[] split1 = line.split("  *");
-                        for (int j = 0; j < split1.length; j++) {
-                            intVals[i++] = Integer.parseInt(split1[j]);
+                        for (String split11 : split1) {
+                            intVals[i++] = Integer.parseInt(split11);
                         }
                     }
                     parameter.setVals(intVals);
@@ -386,8 +375,8 @@ public class MmsParamsReader {
                     while (i < parameter.getSize()) {
                         line = readLine(in);
                         String[] split1 = line.split("  *");
-                        for (int j = 0; j < split1.length; j++) {
-                            floatVals[i++] = Float.parseFloat(split1[j]);
+                        for (String split11 : split1) {
+                            floatVals[i++] = Float.parseFloat(split11);
                         }
                     }
                     parameter.setVals(floatVals);
@@ -399,8 +388,8 @@ public class MmsParamsReader {
                     while (i < parameter.getSize()) {
                         line = readLine(in);
                         String[] split1 = line.split("  *");
-                        for (int j = 0; j < split1.length; j++) {
-                            doubleVals[i++] = Double.parseDouble(split1[j]);
+                        for (String split11 : split1) {
+                            doubleVals[i++] = Double.parseDouble(split11);
                         }
                     }
                     parameter.setVals(doubleVals);
@@ -411,8 +400,8 @@ public class MmsParamsReader {
                     for (int i = 0; i < parameter.getSize(); i++) {
                         line = readLine(in);
                         String[] split1 = line.split("  *");
-                        for (int j = 0; j < split1.length; j++) {
-                            stringVals[i] = split1[j];
+                        for (String split11 : split1) {
+                            stringVals[i] = split11;
                         }
                     }
                     parameter.setVals(stringVals);

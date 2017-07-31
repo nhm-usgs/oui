@@ -54,13 +54,9 @@ public class MmsDataFileWriter {
                 curr.add(Calendar.DATE, 1);
             }
             
-
-        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+        } catch (java.lang.ArrayIndexOutOfBoundsException | IOException e) {
             System.out.println ("Bombed on " + curr.getMmsDateTime());
             System.out.println ("data j = " + j);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

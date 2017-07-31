@@ -97,6 +97,7 @@ public class JTreeTable extends JTable {
      * is not the right thing to do for an editor. Returning -1 for the 
      * editing row in this case, ensures the editor is never painted. 
      */
+    @Override
     public int getEditingRow() {
         return (getColumnClass(editingColumn) == TreeTableModel.class) ? -1 : editingRow;  
     }
@@ -113,15 +114,18 @@ public class JTreeTable extends JTable {
 	    super(model); 
 	}
 
+        @Override
 	public void setBounds(int x, int y, int w, int h) {
 	    super.setBounds(x, 0, w, JTreeTable.this.getHeight());
 	}
 
+        @Override
 	public void paint(Graphics g) {
 	    g.translate(0, -visibleRow * getRowHeight());
 	    super.paint(g);
 	}
 
+        @Override
 	public Component getTableCellRendererComponent(JTable table,
 						       Object value,
 						       boolean isSelected,
@@ -142,6 +146,7 @@ public class JTreeTable extends JTable {
     //
 
     public class TreeTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+        @Override
 	public Component getTableCellEditorComponent(JTable table, Object value,
 						     boolean isSelected, int r, int c) {
 	    return tree;

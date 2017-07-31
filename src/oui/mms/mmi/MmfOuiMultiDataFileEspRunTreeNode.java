@@ -47,7 +47,8 @@ public class MmfOuiMultiDataFileEspRunTreeNode extends MmsModelTreeNode implemen
     private String paramFileExt;
     private String mmi = null;
     
-    /** Creates a new instance of SingleRunMmi */
+    /** Creates a new instance of SingleRunMmi
+     * @param xml_node */
     public MmfOuiMultiDataFileEspRunTreeNode(Node xml_node) {
         super(xml_node);
         mmi = MmsProjectXml.getElementContent(xml_node, "@mmi", null);
@@ -133,34 +134,30 @@ public class MmfOuiMultiDataFileEspRunTreeNode extends MmsModelTreeNode implemen
         }
     }
     
+    @Override
     public void runModel(OuiCalendar forecastStart, OuiCalendar forecastEnd) {
 /*
- *  Generate the ESP run and save to XML file
- */
-        for (int i = 0; i < subBasins.length; i++) {
-            EnsembleData ed = new EnsembleData(subBasins[i], null, null, null);
-            String data_file = mmsWorkspace + "/input/data/" + subBasins[i] + dataFileExtension;
-
+         *  Generate the ESP run and save to XML file
+         */
+        for (String subBasin : subBasins) {
+            EnsembleData ed = new EnsembleData(subBasin, null, null, null);
+            String data_file = mmsWorkspace + "/input/data/" + subBasin + dataFileExtension;
             MmsOuiEspRun.writeEspDataFiles(ed, initLength, data_file, espDataDestDir, forecastStart, forecastEnd);
-            
-            ed.setName(subBasins[i]);
-            
+            ed.setName(subBasin);
             MmsOuiEspRun.runEsp(ed, mmsWorkspace, executable, envFile, controlFileExt,
                     espIODir, espVariableName, espVariableIndex, relativeMmsWorkspace, paramFileExt);
-            
             MmsOuiEspReader.readEsp(ed);
-            
-            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";
+            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasin + ".xml";
             ed.save(xml_file);
         }
 /*
- *  Load ESP run into EnsembleData
- */
+         *  Load ESP run into EnsembleData
+         */
         
-        ArrayList<EnsembleData> localEnsembleData = new ArrayList<EnsembleData>(subBasins.length);
+        ArrayList<EnsembleData> localEnsembleData = new ArrayList<>(subBasins.length);
         
         for (int i = 0; i < subBasins.length; i++) {
-            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";;
+            String xml_file = mmsWorkspace + "/output/" + espIODir + "/" + subBasins[i] + ".xml";
             EnsembleData ed = EnsembleData.load(xml_file);
             localEnsembleData.add(i, ed);
         }

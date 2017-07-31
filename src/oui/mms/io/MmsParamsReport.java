@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import oui.mms.datatypes.Dimension;
 import oui.mms.datatypes.Parameter;
 import oui.mms.datatypes.ParameterSet;
@@ -21,7 +23,7 @@ public class MmsParamsReport {
              */
             //            Set dim_names1 = mp1.getDimensionNames();
             Iterator<String> foo = mp1.getDimensionNames();
-            TreeSet<String> dim_names1 = new TreeSet<String>();
+            TreeSet<String> dim_names1 = new TreeSet<>();
             while (foo.hasNext()) {
                 dim_names1.add(foo.next());
             }
@@ -49,7 +51,7 @@ public class MmsParamsReport {
             
 //            Set param_names1 = mp1.getParameterNames();
             foo = mp1.getParameterNames();
-            TreeSet<String> param_names1 = new TreeSet<String>();
+            TreeSet<String> param_names1 = new TreeSet<>();
             while (foo.hasNext()) {
                 param_names1.add(foo.next());
             }
@@ -65,35 +67,31 @@ public class MmsParamsReport {
                 String s = String.format("%1$-20s  %2$4d %3$15.5f %4$15.5f %5$15.5f", param_name, param1.getSize(), param1.getMean(), param1.getMin(), param1.getMax());
                 out.write(s + "\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(MmsParamsReport.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 out.flush();
                 out.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
 
-    public static void writeHistory (Writer out, ParameterSet mp1) {
+    public static void writeHistory(Writer out, ParameterSet mp1) {
         try {
             out.write("\n");
             out.write("File = " + mp1.getFileName() + "\n");
             out.write("\n");
-           
-//            ArrayList hist =  mp1.getHistory();
-//            Iterator it = hist.iterator();
-//            while (it.hasNext()) {
-//                ParameterSetHistory mpsh = (ParameterSetHistory)(it.next());
-//                out.write (mpsh.toString() + "\n");
-//            }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (IOException ex) {
+            Logger.getLogger(MmsParamsReport.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 out.flush();
                 out.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
     

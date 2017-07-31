@@ -37,7 +37,8 @@ public class MmsOuiMultiDataFileRunTreeNode extends MmsModelTreeNode implements 
     private String[] xrouteVariableIndex;
     private  String mmi = null;
     
-    /** Creates a new instance of SingleRunMmi */
+    /** Creates a new instance of SingleRunMmi
+     * @param xml_node */
     public MmsOuiMultiDataFileRunTreeNode(Node xml_node) {
         super(xml_node);
         mmi = MmsProjectXml.getElementContent(xml_node, "@mmi", null);
@@ -106,25 +107,23 @@ public class MmsOuiMultiDataFileRunTreeNode extends MmsModelTreeNode implements 
         }
     }
     
+    @Override
     public void runModel(OuiCalendar runStart, OuiCalendar runEnd) {
 /*
- *  Run MMS for each subBasin
- */
-        for (int i = 0; i < subBasins.length; i++) {
-            String datafile = " -set data_file " + mmsWorkspace + "/input/data/" + subBasins[i] + dataFileExtension;            
-            String statvarfilename = subBasins[i] + ".statvar";
+         *  Run MMS for each subBasin
+         */
+        for (String subBasin : subBasins) {
+            String datafile = " -set data_file " + mmsWorkspace + "/input/data/" + subBasin + dataFileExtension;
+            String statvarfilename = subBasin + ".statvar";
             String statvarfile = " -set nstatVars 1 -set statVar_names " + variableName + " -set statVar_element " + variableIndex + " -set statsON_OFF 1 -set stat_var_file " + statvarfilename;
             String start = " -set start_time " + runStart.getControlFileDateTime();
             String end = " -set end_time " + runEnd.getControlFileDateTime();
             String env = " -batch -E" + mmsWorkspace + "/" + envFile;
-            String control = " -C" + subBasins[i] + controlFileExt;
+            String control = " -C" + subBasin + controlFileExt;
             String runoptions = " -set init_vars_from_file 0 -set save_vars_to_file 0 -set gisOutON_OFF 0 -set db_on_off 0";
             String exe = mmsWorkspace + "/" + executable;
-            
             String arg = exe + env + control + datafile + statvarfile + start + end + runoptions;
-            
             System.out.println("MmsOuiMultiDataFileRunTreeNode.runModel: " + arg);
-            
             CommandRunner.runModel(arg, null);
         }
 
@@ -137,8 +136,8 @@ public class MmsOuiMultiDataFileRunTreeNode extends MmsModelTreeNode implements 
         String xrouteDataFile = mmsWorkspace + "/input/data/" + "xroute.single.data";
         MmsDataFileWriter mdfw = new MmsDataFileWriter(runStart, runEnd, header);
         
-        for (int i = 0; i < subBasins.length; i++) {
-            String statvarfilename = mmsWorkspace + "/output/" + subBasins[i] + ".statvar";
+        for (String subBasin : subBasins) {
+            String statvarfilename = mmsWorkspace + "/output/" + subBasin + ".statvar";
             MmsStatvarReader msr = new MmsStatvarReader(statvarfilename);
             TimeSeries outputTS = msr.getTimeSeries(variableName + " " + variableIndex);
             mdfw.addTrace(outputTS.getVals());
