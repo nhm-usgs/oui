@@ -18,7 +18,6 @@ import java.util.StringTokenizer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.ui.RefineryUtilities;
-import oui.mms.datatypes.OuiCalendar;
 
 /**
  *
@@ -28,13 +27,13 @@ public class MmsRuntimeValueReader extends Thread {
     
     int bufferSize = 365;
     
-    private int numRuntimePlots;
+    private final int numRuntimePlots;
     private Process process;
-    private int[] numVarsEachPlot;
-    private OuiCalendar start;
-    private int traceLength;    
+    private final int[] numVarsEachPlot;
+//    private OuiCalendar start;
+//    private int traceLength;    
     private double x;
-    private double[] y;
+    private final double[] y;
     int[] varPlotIndex;
     int[] varPlotTraceIndex;
     ArrayList<String> varNames;
@@ -51,10 +50,9 @@ public class MmsRuntimeValueReader extends Thread {
         
         try {
             bufferSize = Integer.parseInt (mms.getSingleControlValue("dispGraphsBuffSize"));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             bufferSize = 30;
             System.out.println("MmsRuntimeValuesReader: Make sure that dispGraphsBuffSize is set in the control file");
-            e.printStackTrace();
         }
         
         ArrayList<String> s = mms.getControlValues("start_time");
@@ -92,27 +90,37 @@ public class MmsRuntimeValueReader extends Thread {
     }
     
     private boolean getDataForTimestep (BufferedReader in) throws IOException {
-        if (isInterrupted()) return false;
-        
-        String line = in.readLine();
-        while (line != null && !line.startsWith("plotRuntimeGraphValue")) line = in.readLine();
-        if (line == null) return false;
-        
-        try {
-            StringTokenizer token = new StringTokenizer(line);
-            for(int i=0; i<3; i++)
-                token.nextToken(); // ignore the first three words
-            
-            x = Double.parseDouble(token.nextToken());
-            for(int i=0; i<y.length; i++) y[i] = Double.parseDouble(token.nextToken());
-        } catch (NumberFormatException e) {
-            System.out.println ("line = " + line);
-            e.printStackTrace();
+        if (isInterrupted()) {
+            return false;
         }
         
+        String line = in.readLine();
+        while (line != null && !line.startsWith("plotRuntimeGraphValue")) {
+            line = in.readLine();
+        }
+        if (line == null) {
+            return false;
+        }
+
+        StringTokenizer token = new StringTokenizer(line);
+        for (int i = 0; i < 3; i++) {
+            token.nextToken(); // ignore the first three words
+        }
+        try {
+            x = Double.parseDouble(token.nextToken());
+        } catch (NumberFormatException foo) {
+            x = -999.9;
+        }
+        for (int i = 0; i < y.length; i++) {
+            try {
+                y[i] = Double.parseDouble(token.nextToken());
+            } catch (NumberFormatException foo) {
+                y[i] = -999.9;
+            }
+        }
         return true;
     }
-    
+
     private RuntimeGraph plotSetup(BufferedReader in, int bufferSize) throws IOException {
         String[][] keyString = new String[numRuntimePlots][];
         for (int plot = 0; plot < numRuntimePlots; plot++) {
@@ -133,7 +141,7 @@ public class MmsRuntimeValueReader extends Thread {
     private void plotUpdate(BufferedReader in, RuntimeGraph demo, int bufferSize) throws IOException {
         int count = 0;
         int tsCount = 0;
-        boolean update_flag = false;
+        boolean update_flag;
         
         OuiJFreeTimeSeries[] series = demo.getRuntimeGraphPanel().getSeries();
         
@@ -155,15 +163,16 @@ public class MmsRuntimeValueReader extends Thread {
             tsCount++;
         }
         
-        for (int i = 0; i < series.length; i++) {
+        for (OuiJFreeTimeSeries serie : series) {
 // TODO            series[i].ageHistoryCountItems();
-            series[i].fireSeriesChanged();
+            serie.fireSeriesChanged();
         }
 
         gui.modelFinished();
 
     }
     
+    @Override
     public void run() {
         try{
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -172,7 +181,9 @@ public class MmsRuntimeValueReader extends Thread {
             plotUpdate(in, demo, bufferSize);
 
             process.getInputStream().close();
-        } catch(IOException e) { e.printStackTrace(); }
+        } catch(IOException e) {
+            System.out.println("MmsRuntimeValueReader: can't read stream from " + process.toString());
+        }
         
         System.out.println ("MmsRuntimeValueReader: exiting thread");
     }
