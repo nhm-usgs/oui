@@ -20,14 +20,15 @@ public class ParamToolRunner {
         try {
 //            MmsParamsReader mp = new MmsParamsReader("f:/gsflow/data/sagehen/input/prms/sagehen_prms.param");
 //            MmsParamsReader mp = new MmsParamsReader("C:/markstro/people/koczot_ld/feather_LD_FL/mms_work/input/params/AC_feather.params");
-            MmsParamsReader mp = new MmsParamsReader("D:\\backedUp\\data\\nhmMapPullerV2\\test2\\redRiver.params");
+            MmsParamsReader mp = new MmsParamsReader("/work/markstro/intern_demo/ModelInput/skunk.params");
             ParameterSet ps = mp.read();
 //            ps.writeHistory(false);
 
-            MmsDefaultParamsReader mdpr = new MmsDefaultParamsReader("D:/backedUp/applications/southPlatteV2/southPlattePrms/control/southPlatte.control.par_name");
-            ParameterSet default_ps = (ParameterSet) mdpr.read();
-
-            ParamTool mpe = new ParamTool(ps, default_ps);
+//            MmsDefaultParamsReader mdpr = new MmsDefaultParamsReader("D:/backedUp/applications/southPlatteV2/southPlattePrms/control/southPlatte.control.par_name");
+//            ParameterSet default_ps = (ParameterSet) mdpr.read();
+//
+//            ParamTool mpe = new ParamTool(ps, default_ps);
+            ParamTool mpe = new ParamTool(ps);
             mpe.setTopLevel(true);
             
         } catch (java.io.IOException e) {
