@@ -482,5 +482,9 @@ public class Parameter implements Comparable {
     public void setType(Class<Double> aClass) {
         this.type = aClass;
     }
+    
+    public Dimension[] getDimensions() {
+        return dimensions;
+    }
 }
 

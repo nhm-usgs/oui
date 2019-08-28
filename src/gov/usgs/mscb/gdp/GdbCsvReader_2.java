@@ -16,7 +16,10 @@ import java.util.logging.Logger;
  *
  * @author markstro
  */
-public class GdbCsvReader {
+
+// This one is for an updated version of the GDP output file. THis format has 
+// a single header line and no unit information.
+public class GdbCsvReader_2 {
 
     private int ndate;
     private int nhru;
@@ -59,16 +62,16 @@ public class GdbCsvReader {
         return values;
     }
 
-    public GdbCsvReader(File f) throws IOException, ParseException {
+    public GdbCsvReader_2(File f) throws IOException, ParseException {
         this(f.getPath());
     }
 
-    public GdbCsvReader(String path) throws IOException, ParseException,
+    public GdbCsvReader_2(String path) throws IOException, ParseException,
             NumberFormatException {
         this.fileName = path;
 
         // get the sizes
-        ndate = lineCount(path) - 3;
+        ndate = lineCount(path) - 1;
         columnCount(path);
 
         // allocate arrays
@@ -82,21 +85,22 @@ public class GdbCsvReader {
             br = new BufferedReader(new InputStreamReader(
                     new FileInputStream(path), "Cp1252"));
 
-
-            line = br.readLine();
-            line = br.readLine();
             line = br.readLine();
 
             String[] split;
-//        1979-01-01T00:00:00Z
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+//        1979-01-01
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             int r = 0;
             while ((line = br.readLine()) != null) {
                 split = line.split(",");
                 dates[r] = sdf.parse(split[0]);
 
                 for (c = 0; c < nhru; c++) {
-                    values[r][c] = Float.parseFloat(split[c + 1]);
+                    if (split[c + 1].length() == 0) {
+                        values[r][c] = values[r][c-1];
+                    } else {
+                        values[r][c] = Float.parseFloat(split[c + 1]);
+                    }
                 }
                 r++;
             }
@@ -142,9 +146,6 @@ public class GdbCsvReader {
             br = new BufferedReader(new InputStreamReader(
                     new FileInputStream(path), "Cp1252"));
             line = br.readLine();
-            description = line.substring(2);
-
-            line = br.readLine();
             String[] split = line.split(",");
             nhru = split.length - 1;
             ids = new int[nhru];
@@ -154,7 +155,7 @@ public class GdbCsvReader {
 
             line = br.readLine();
             split = line.split(",");
-            units = split[1];
+//            units = split[1];
 
         } catch (NumberFormatException e) {
             System.out.println ("gov.usgs.mows.gdp.GdbCsvReader.columnCount()");
@@ -172,13 +173,13 @@ public class GdbCsvReader {
     public static void main(String[] args) {
         File f = new File("C:/work/csvTests/solradTest.csv");
         try {
-            GdbCsvReader gcr = new GdbCsvReader(f);
+            GdbCsvReader_2 gcr = new GdbCsvReader_2(f);
             
             System.out.println (gcr.getDescription() + " " + gcr.getUnits());
             System.out.println (gcr.getNdate() + " " + gcr.getNhru());
             System.out.println (gcr.getFileName());
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(GdbCsvReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GdbCsvReader_2.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
